@@ -17,8 +17,68 @@ pacman::p_load(sf,tidyverse)
 
 ## Importing Geospatial Data
 
-### Importing polygon feature data
+### Importing polygon feature data in shapefile format
 
 ```{r}
 mpsz <- st_read(dsn = "data/geospatial",layer = "MP14_SUBZONE_WEB_PL")
 ```
+
+### Importing polyline feature data in shapefile format
+
+```{r}
+cyclingpath = st_read(dsn = "data/geospatial",layer = "cyclingPath")
+```
+
+### Importing GIS data in kml format
+
+```{r}
+preschool = st_read("data/geospatial/pre-schools-location-kml.kml")
+```
+
+Take note that the data frame is in **wgs84** coordinates system while the above two shapefiles are in SVY21 coordinates system.
+
+## Checking the Content of A Simple Feature Data Frame
+
+### Working with st_geometry()
+
+```{r}
+st_geometry(mpsz)
+```
+
+This prints the basic information of the feature class.
+
+### Working with glimpse()
+
+```{r}
+glimpse(mpsz)
+```
+
+This reveals the data type of each field. Most of the fields are in **double-precision values**.
+
+### Working with head()
+
+```{r}
+head(mpsz, n=5)
+```
+
+This reveals the complete information of a featured object with the number of records specified by "n".
+
+## Plotting the Geospatial Data
+
+```{r}
+plot(mpsz,max.plot = 15)
+```
+
+Default to print the first 9 maps, use "max.plot" to display the remaining.
+
+```{r}
+plot(st_geometry(mpsz))
+```
+
+Use this to only show the geometry.
+
+```{r}
+plot(mpsz["PLN_AREA_N"])
+```
+
+Use the above code chunk to plot the sf object by using a specific attribute.
