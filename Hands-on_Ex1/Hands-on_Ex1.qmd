@@ -1,5 +1,5 @@
 ---
-title: "Hands-on Exercise 1: Geospatial Data Wrangling with R"
+title: "Hands-on Exercise 1.1: Geospatial Data Wrangling with R"
 editor: visual
 ---
 
@@ -82,3 +82,7 @@ plot(mpsz["PLN_AREA_N"])
 ```
 
 Use the above code chunk to plot the sf object by using a specific attribute.
+
+\*plot() is meant for plotting the geospatial object for a quick look. for high cartographic quality plot, other R package such as tmap should be used.
+
+## Working with Projection
