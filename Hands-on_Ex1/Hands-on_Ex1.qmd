@@ -85,4 +85,60 @@ Use the above code chunk to plot the sf object by using a specific attribute.
 
 \*plot() is meant for plotting the geospatial object for a quick look. for high cartographic quality plot, other R package such as tmap should be used.
 
-## Working with Projection
+## Working with Projection (Projection Transformation)
+
+### Assigning EPSG code to a simple feature data frame
+
+```{r}
+st_crs(mpsz)
+```
+
+This code shows the coordinate system of the data frame. Notice there the EPSG code is 9001 and not 3414 as the correct code for SVY21.
+
+To assign the correct EPSG code to mpsz data frame, use the below code chunk.
+
+```{r}
+mpsz3414 <- st_set_crs(mpsz, 3414)
+```
+
+```{r}
+st_crs(mpsz3414)
+```
+
+### Transforming the projection of preschool from wgs84 to svy21
+
+```{r}
+preschool3414 <- st_transform(preschool,
+                              crs=3414)
+
+st_crs(preschool3414)
+```
+
+## Importing and Converting an Aspatial Data
+
+Aspatial data is not a geospatial data, but among the data fields, there are two fields that capture the x- and y-coordinates of the data points.
+
+### Importing the aspatial data
+
+```{r}
+listings <- read_csv("data/aspatial/listings.csv")
+```
+
+```{r}
+list(listings)
+```
+
+Data frame above consists of 4252 rows and 16 columns. Two useful fields we are going to use are latitude and longitude. Note that they are in decimal degree format, we will assume that the data is in **wgs84** Geographic Coordinate System.
+
+## Creating a simple feature data frame from an aspatial data frame
+
+```{r}
+st_as_sf(listings,
+         coords = c("longitude","latitude"),
+         crs = 4326) %>%
+  st_transform(crs = 3414)
+```
+
+Things to learn from the arguments above:
+
+-   *coords* argument requires you to provide the column name of the x-coordinates first then followed by the column name of the y-coordinates.
