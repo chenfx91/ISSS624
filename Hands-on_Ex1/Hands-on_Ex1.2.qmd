@@ -141,3 +141,29 @@ Beside *alpha* argument, there are three other arguments for *tm_borders()*, the
 -   lwd = border line width. The default is 1, and
 
 -   lty = border line type. The default is "solid"
+
+### Data classification methods of tmap
+
+***tmap*** provides a total ten data classfication methods, namely: *fixed, sd, equal, pretty (default), quantile, kmeans, hclust, bclust, fisher, and jenks.*
+
+To define a data classification method, the style argument of *tm_fill()* or *tm_polygons()* will be used.
+
+#### Plotting choropleth maps with built-in classification methods
+
+```{r}
+tm_shape(mpsz_pop2020)+
+  tm_fill("DEPENDENCY",
+          n = 5,
+          style = "jenks")+
+  tm_borders(alpha = 0.5)
+```
+
+```{r}
+tm_shape(mpsz_pop2020)+
+  tm_fill("DEPENDENCY",
+          n = 5,
+          style = "equal")+
+  tm_borders(alpha = 0.5)
+```
+
+#### Plotting choropleth map with customer break
