@@ -1,0 +1,14 @@
+---
+title: "Hands-on_Ex1.2: Choropleth Mapping with R"
+editor: visual
+---
+
+## Overview
+
+Choropleth mapping involves the symbolisation of enumeration units, such as countries, provinces, states, counties or census units, using area patterns or graduated colours. E.g., a social scientist may need o use a choropleth map to portray the spatial distribution of aged population of Singapore by Master Plan 2014 Subzone Boundary.
+
+## Getting Started
+
+```{r}
+pacman::p_load(sf, tmap, tidyverse)
+```

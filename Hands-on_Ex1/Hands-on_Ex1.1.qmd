@@ -157,8 +157,7 @@ New column *geometry* has been added to the data frame.
 
 ### Buffering
 
-The scenario:
-The authority is planning to upgrade the exiting cycling path. To do so, they need to acquire 5 metres of reserved land on the both sides of the current cycling path. You are tasked to determine the extend of the land need to be acquired and their total area.
+The scenario: The authority is planning to upgrade the exiting cycling path. To do so, they need to acquire 5 metres of reserved land on the both sides of the current cycling path. You are tasked to determine the extend of the land need to be acquired and their total area.
 
 The solution:
 
