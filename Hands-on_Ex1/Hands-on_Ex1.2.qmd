@@ -103,4 +103,41 @@ tm_shape(mpsz_pop2020)+
              position = c("left","bottom"))
 ```
 
-#### drawing a base map
+#### Drawing a base map
+
+```{r}
+tm_shape(mpsz_pop2020)+
+  tm_polygons()
+```
+
+#### Drawing a choropleth map using tm_pologons() by assigning the target variable to *tm_polygons()*
+
+```{r}
+tm_shape(mpsz_pop2020)+
+  tm_polygons("DEPENDENCY")
+```
+
+#### Drawing a choropleth map using *tm_fill()* and *tm_border()*
+
+```{r}
+tm_shape(mpsz_pop2020)+
+  tm_fill("DEPENDENCY")
+```
+
+```{r}
+tm_shape(mpsz_pop2020)+
+  tm_fill("DEPENDENCY")+
+  tm_borders(lwd = 0.1, alpha =0.5)
+```
+
+Notice that light-gray border lines have been added on the choropleth map.
+
+The *alpha* argument is used to define transparency number between 0 (totally transparent) and 1 (not transparent). By default, the alpha value of the col is used (normally 1).
+
+Beside *alpha* argument, there are three other arguments for *tm_borders()*, they are:
+
+-   col = border colour,
+
+-   lwd = border line width. The default is 1, and
+
+-   lty = border line type. The default is "solid"
