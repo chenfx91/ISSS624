@@ -167,3 +167,76 @@ tm_shape(mpsz_pop2020)+
 ```
 
 #### Plotting choropleth map with customer break
+
+Breakpoints can be set explicitly by means of the breaks argument to the *tm_fill()*. In **tmap**, the breaks include a minimum and maximum. As a result, in order to end up with n categories, n+1 elements must be specified in the breaks option (the values must be in increasing order).
+
+Check the variable statistics first.
+
+```{r}
+summary(mpsz_pop2020$DEPENDENCY)
+```
+
+```{r}
+tm_shape(mpsz_pop2020)+
+  tm_fill("DEPENDENCY",
+          breaks = c(0, 0.60, 0.70, 0.80, 0.90, 1.00))+
+  tm_borders(alpha = 0.5)
+```
+
+### Colour Scheme
+
+#### Using ColourBrewer palette
+
+```{r}
+tm_shape(mpsz_pop2020)+
+  tm_fill("DEPENDENCY",
+          n = 6,
+          style = "quantile",
+          palette = "Blues")+
+  tm_borders(alpha = 0.5)
+```
+
+Change colours. "-" to reverse the colour scheme.
+
+```{r}
+tm_shape(mpsz_pop2020)+
+  tm_fill("DEPENDENCY",
+          n = 6,
+          style = "quantile",
+          palette = "-Greens")+
+  tm_borders(alpha = 0.5)
+```
+
+### Map Layouts
+
+#### Map Legend
+
+```{r}
+tm_shape(mpsz_pop2020)+
+  tm_fill("DEPENDENCY",
+          style = "jenks",
+          palette = "Blues",
+          legend.hist = TRUE,
+          legend.is.portrait =TRUE,
+          legend.hist.z = 0.1)+
+  tm_layout(main.title = "Distribution of Dependency Ratio by planning subzone \n(Jenks classification)",
+            main.title.position = "center",
+            main.title.size = 1,
+            legend.height = 0.45,
+            legend.width = 0.35,
+            legend.outside = FALSE,
+            legend.position = c("right", "bottom"),
+            frame = FALSE)+
+  tm_borders(alpha = 0.5)
+```
+
+#### Map Style
+
+```{r}
+tm_shape(mpsz_pop2020)+
+  tm_fill("DEPENDENCY",
+          style = "quantile",
+          palette = "-Greens")+
+  tm_borders(alpha = 0.5)+
+  tmap_style("classic")
+```
