@@ -3,31 +3,48 @@ title: "In-class Exercise"
 editor: visual
 ---
 
-Overview
+## Overview
 
-This xxx
+This hands-on exercise, we will be learning how to compute spatial weights using R.
 
-Getting Started
+## Getting Started
 
 The code chunk below will install and load tidyverse and sf packages.
 
 ```{r}
-pacman::p_load(sf,tidyverse)
+pacman::p_load(sf, spdep, tmap, tidyverse)
 ```
 
-Importing Geospitial Data
+## Importing Geospitial Data
 
-Importing polygon features
+### Importing polygon features
 
-This code chunk will import ESRI shapefile into R.
+This code chunk will import ESRI shapefile into R
 
 ```{r}
-mpsz <- st_read(dsn = "data/geospatial", 
+hunan <- st_read(dsn = "data/geospatial", 
                 layer = "hunan")
 ```
 
-Importing attribute data in csv
+### Importing attribute data in csv
 
 ```{r}
-Hunan <- read_csv("data/aspatial/Hunan_2012.csv")
+hunan2012 <- read_csv("data/aspatial/Hunan_2012.csv")
+```
+
+#### Performing relational join
+
+```{r}
+hunan <- left_join(hunan, hunan2012)
+```
+
+## Visualising Regional Development Indicator
+
+```{r}
+basemap <- tm_shape(hunan)+
+  tm_polygons()+
+  tm_text("NAME_3",size = 0.5)
+
+gdppc <- qtm(hunan, "GDPPC")
+tmap_arrange(basemap, gdppc, asp = 1, ncol = 2)
 ```
