@@ -1,0 +1,41 @@
+---
+title: "In-class Exercise 2"
+editor: visual
+execute: 
+  warning: false
+---
+
+Overview
+
+Getting Started
+
+```{r}
+pacman::p_load(sf, tidyverse, tmap, spdep, funModeling)
+```
+
+Importing Geospatial Data
+
+Two geospatial data sets will be used, they are:
+
+-   geo_export
+
+-   nga_admbnda_adm2_osgof_20190417
+
+```{r}
+#| eval:false
+wp <- st_read(dsn = "geodata",
+              layer = "geo_export",
+              crs = 4326) %>%
+  filter(clean_coun == "Nigeria")
+```
+
+```{r}
+wp_nga <- write_rds(wp,
+                    "geodata/wp_nga.rds")
+```
+
+```{r}
+nga <- st_read(dsn = "geodata",
+               layer = "nga_admbnda_adm2_osgof_20190417",
+               crs = 4326)
+```
