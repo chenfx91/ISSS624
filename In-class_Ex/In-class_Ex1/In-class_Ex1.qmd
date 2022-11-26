@@ -48,3 +48,5 @@ basemap <- tm_shape(hunan)+
 gdppc <- qtm(hunan, "GDPPC")
 tmap_arrange(basemap, gdppc, asp = 1, ncol = 2)
 ```
+
+Computing Contiguity Spatial Weights
