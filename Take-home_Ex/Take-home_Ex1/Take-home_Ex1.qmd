@@ -520,8 +520,99 @@ k1dists_wp <- unlist(nbdists(k1_wp,coords_wp, longlat = TRUE))
 summary(k1dists_wp)
 ```
 
-**The summary report shows that the largest first nearest neighbour distance is 61.79 km, so using this as the upper threshold gives certainty that all units will have at least one neighbour.**
+The summary report shows that the largest first nearest neighbour distance is 71.66 km, so using this as the upper threshold gives certainty that all units will have at least one neighbour.
 
 #### Computing fixed distance weight matrix
 
 Now, we will compute the distance weight matrix by using [*dnearneigh()*](https://r-spatial.github.io/spdep/reference/dnearneigh.html) as shown in the code chunk below.
+
+```{r}
+wm_d72 <- dnearneigh(coords_wp, 0, 72, longlat = TRUE)
+wm_d72
+```
+
+Next, *nb2listw()* is used to convert the nb object into spatial weights object.
+
+```{r}
+wm72_lw <- nb2listw(wm_d72, style = 'B')
+summary(wm72_lw)
+```
+
+#### Computing adpative distance weight matrix
+
+One of the characteristics of fixed distance weight matrix is that more densely settled areas (usually the urban areas) tend to have more neighbours and the less densely settled areas (usually the rural counties) tend to have lesser neighbours. Having many neighbours smoothes the neighbour relationship across more neighbours.
+
+It is possible to control the numbers of neighbours directly using k-nearest neighbours, either accepting asymmetric neighbours or imposing symmetry as shown in the code chunk below.
+
+```{r}
+knn_wp <- knn2nb(knearneigh(coords_wp, k=8))
+knn_wp
+```
+
+Next, *nb2listw()* is used to convert the nb object into spatial weights object.
+
+```{r}
+knn_lw_wp <- nb2listw(knn_wp, style = 'B')
+summary(knn_lw_wp)
+```
+
+## Computing Gi statistics
+
+### Gi Statistics using fixed distance
+
+```{r}
+gi.fixed_wp <- localG(nga_wp$`wpt non-functional`,wm72_lw)
+gi.fixed_wp
+```
+
+Next, we will join the Gi values to their corresponding Nigeria sf data frame by using the code chunk below.
+
+```{r}
+nga_wp.gi <- cbind(nga_wp, as.matrix(gi.fixed_wp)) %>%
+  rename(gstat_fixed_wp = as.matrix.gi.fixed_wp.)
+```
+
+**The code chunk above performs three tasks. First, it convert the output vector (i.e. *gi.fixed*) into r matrix object by using *as.matrix()*. Next, *cbind()* is used to join hunan\@data and *gi.fixed* matrix to produce a new SpatialPolygonDataFrame called *hunan.gi*. Lastly, the field name of the gi values is renamed to *gstat_fixed* by using *rename()*.**
+
+### Mapping Gi values with fixed distance weights
+
+The code chunk below shows the functions used to map the Gi values derived using fixed distance weight matrix.
+
+```{r}
+Gimap_wp <-tm_shape(nga_wp.gi ) +
+  tm_fill(col = "gstat_fixed_wp", 
+          style = "pretty",
+          palette="-RdBu",
+          title = "local Gi") +
+  tm_borders(alpha = 0.5)
+
+tmap_arrange(wp_nonfunctional, Gimap_wp, 
+             asp=1, ncol=2)
+```
+
+**Observations here:**
+
+### Gi statistics using adaptive distance
+
+```{r}
+gi.adaptive_wp <- localG(nga_wp$`wpt non-functional`,wm72_lw)
+nga_wp.gi <- cbind(nga_wp, as.matrix(gi.adaptive_wp)) %>%
+  rename(gstat_adaptive_wp = as.matrix.gi.adaptive_wp.)
+```
+
+### Mapping Gi values with adaptive distance weights
+
+```{r}
+Gimap_wp <- tm_shape(nga_wp.gi) + 
+  tm_fill(col = "gstat_adaptive_wp", 
+          style = "pretty", 
+          palette="-RdBu", 
+          title = "local Gi") + 
+  tm_borders(alpha = 0.5)
+
+tmap_arrange(wp_nonfunctional, Gimap_wp, 
+             asp=1, ncol=2)
+```
+
+**Observations here:**
+
