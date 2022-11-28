@@ -177,7 +177,7 @@ Now, you have the tidy sf data table subsequent analysis. We will save the sf da
 write_rds(nga_wp, "geodata/nga_wp.rds")
 ```
 
-## Visualising the spatial dsitribution of water points
+## Visualising the spatial distribution of water points
 
 ```{r}
 #| fig-width: 14
@@ -311,14 +311,111 @@ head(localMI_wp)
 
 The code chunk below list the content of the local Moran matrix derived by using [*printCoefmat()*](https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/printCoefmat).
 
-There are some duplicated names in ADM2_EN, we need to consolidate the duplicated names.
-
 ```{r}
 table(duplicated(nga_wp$ADM2_EN))
 
 
-#printCoefmat(data.frame(
-  #localMI_wp[fips_wp,], 
-  #row.names=nga_wp$ADM2_EN[fips_wp]),
-  #check.names=FALSE)
+printCoefmat(data.frame(
+  localMI_wp[fips_wp,], 
+  row.names=nga_wp$ADM2_PCODE[fips_wp]),
+  check.names=FALSE)
+```
+
+### Mapping local Moran's I p-values
+
+Before mapping the local Moran\'s I map, it is wise to append the local Moran\'s I dataframe (i.e. localMI) onto hunan SpatialPolygonDataFrame. The code chunks below can be used to perform the task. The out SpatialPolygonDataFrame is called *hunan.localMI*.
+
+```{r}
+nga_wp.localMI_wp <- cbind(nga_wp,localMI_wp) %>%
+  rename(Pr.Ii = Pr.z....E.Ii..)
+```
+
+### Mapping local Moran\'s I values
+
+Using choropleth mapping functions of **tmap** package, we can plot the local Moran\'s I values by using the code chinks below.
+
+```{r}
+tm_shape(nga_wp.localMI_wp) +
+  tm_fill(col = "Ii", 
+          style = "pretty",
+          palette = "RdBu",
+          title = "local moran statistics") +
+  tm_borders(alpha = 0.5)
+```
+
+### Mapping local Moran's I p-values
+
+The choropleth shows there is evidence for both positive and negative Ii values. However, it is useful to consider the p-values for each of these values, as consider above.
+
+The code chunks below produce a choropleth map of Moran\'s I p-values by using functions of **tmap** package.
+
+```{r}
+tm_shape(nga_wp.localMI_wp) +
+  tm_fill(col = "Pr.Ii", 
+          breaks=c(-Inf, 0.001, 0.01, 0.05, 0.1, Inf),
+          palette="-Blues", 
+          title = "local Moran's I p-values") +
+  tm_borders(alpha = 0.5)
+```
+
+### Mapping both local Moran\'s I values and p-values
+
+For effective interpretation, it is better to plot both the local Moran\'s I values map and its corresponding p-values map next to each other.
+
+The code chunk below will be used to create such visualisation.
+
+```{r}
+localMI_wp.map <- tm_shape(nga_wp.localMI_wp) +
+  tm_fill(col = "Ii", 
+          style = "pretty", 
+          title = "local moran statistics") +
+  tm_borders(alpha = 0.5)
+
+pvalue_wp.map <- tm_shape(nga_wp.localMI_wp) +
+  tm_fill(col = "Pr.Ii", 
+          breaks=c(-Inf, 0.001, 0.01, 0.05, 0.1, Inf),
+          palette="-Blues", 
+          title = "local Moran's I p-values") +
+  tm_borders(alpha = 0.5)
+
+tmap_arrange(localMI_wp.map, pvalue_wp.map, asp=1, ncol=2)
+```
+
+## Creating a LISA Cluster Map
+
+The LISA Cluster Map shows the significant locations color coded by type of spatial autocorrelation. The first step before we can generate the LISA cluster map is to plot the Mora scatterplot.
+
+### Plotting Moran scatterplot
+
+The Moran scatterplot is an illustration of the relationship between the values of the chosen attribute at each location and the average value of the same attribute at neighboring locations.
+
+The code chunk below plots the Moran scatterplot of Non-Functional water points by using [*moran.plot()*](https://r-spatial.github.io/spdep/reference/moran.plot.html) of **spdep**.
+
+```{r}
+nci_wp <- moran.plot(nga_wp$`wpt non-functional`, wp_rswm_q,
+                  labels=as.character(nga_wp$ADM2_EN), 
+                  xlab="Non-Functional Water Points", 
+                  ylab="Spatially Lag Non-Functional Water Points")
+```
+
+**Notice that the plot is split in 4 quadrants. The top right corner belongs to areas that have high GDPPC and are surrounded by other areas that have the average level of GDPPC. This are the high-high locations in the lesson slide.**
+
+### Plotting Moran scatterplot with standardised variable
+
+First we will use [*scale()*](https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/scale) to centers and scales the variable. Here centering is done by subtracting the mean (omitting NAs) the corresponding columns, and scaling is done by dividing the (centered) variable by their standard deviations.
+
+```{r}
+nga_wp$Z.NF_WP <- scale(nga_wp$`wpt non-functional`) %>%
+  as.vector
+```
+
+The [*as.vector()*](https://www.rdocumentation.org/packages/pbdDMAT/versions/0.5-1/topics/as.vector) added to the end is to make sure that the data type we get out of this is a vector, that map neatly into out dataframe.
+
+Now, we are ready to plot the Moran scatterplot again by using the code chunk below.
+
+```{r}
+nci_wp2 <- moran.plot(nga_wp$Z.NF_WP, wp_rswm_q,
+                   labels=as.character(nga_wp$ADM2_EN),
+                   xlab="z-Non-Functional Water Points", 
+                   ylab="Spatially Lag z-Non-Functional Water Points")
 ```
