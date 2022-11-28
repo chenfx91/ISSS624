@@ -1,0 +1,324 @@
+---
+title: "Take-home Exercise 1: Analysing and Visualising Spatial Patterns of Non-Functional Water Points"
+editor: visual
+---
+
+## Overview
+
+Background
+
+Problem Statement
+
+-   Are development evenly distributed in Nigeria?
+
+-   Is there sign of spatial clustering?
+
+## Getting Started
+
+In the code chunk below, `p_load()` of *pacman* package is used to install and load the following R packages into R environment:
+
+-   **sf**: used for importing, managing, and processing geospatial data
+
+-   **tidyverse**: a collection of packages for data science tasks
+
+-   **tmap**: used for creating thematic maps, such as choropleth and bubble maps
+
+-   **spdep**: used to compute spatial weights, global and local spatial autocorrelation statistics, and
+
+-   **funModeling**: used for rapid Exploratory Data Analysis
+
+```{r}
+pacman::p_load(sf, tidyverse, tmap, spdep, funModeling)
+```
+
+## Importing Geospatial Data
+
+Two geospatial data sets will be used, they are:
+
+-   geo_export
+
+-   nga_admbnda_adm2_osgof_20190417
+
+### Importing water point geospatial data
+
+First, we are going to import the water point geospatial data (i.e. geo_export) by using the code chunk below.
+
+```{r}
+#| eval: false
+wp <- st_read(dsn = "geodata",
+              layer = "geo_export",
+              crs = 4326) %>%
+  filter(clean_coun == "Nigeria")
+```
+
+Things to learn from the code chunk above:
+
+-   `st_read()` of **sf** package is used to import *geo_export* shapefile into R environment and save the imported geospatial data into simple feature data table.
+
+-   `filter()` of dplyr package is used to extract water point records of Nigeria.
+
+> Be warned: Avoid performing transformation if you plan to use `st_intersects()` of **sf** package in the later stage of the geoprocessing. This is because `st_intersects()` only works correctly if the geospatial data are in geographic coordinate system (i.e. wgs84)
+
+Next, `write_rds()` of readr package is used to save the extracted sf data table (i.e. wp) into an output file in rds data format. The output file is called *wp_nga.rds* and it is saved in *geodata* sub-folder.
+
+```{r}
+#| eval: false
+wp_nga <- write_rds(wp,
+                    "geodata/wp_nga.rds")
+```
+
+### Importing Nigeria LGA boundary data
+
+```{r}
+nga <- st_read(dsn = "geodata",
+               layer = "nga_admbnda_adm2_osgof_20190417",
+               crs = 4326)
+```
+
+Thing to learn from the code chunk above.
+
+-   `st_read()` of **sf** package is used to import *nga_admbnda_adm2_osgof_20190417* shapefile into R environment and save the imported geospatial data into simple feature data table.
+
+## Data Wrangling
+
+### Recoding NA values into string
+
+```{r}
+wp_nga <- read_rds("geodata/wp_nga.rds") %>%
+  mutate(status_cle = replace_na(status_cle,"unknown"))
+```
+
+### EDA
+
+In the code chunk below, `freq()` of **funModeling** package is used to display the distribution of *status_cle* field in *wp_nga*.
+
+```{r}
+freq(data=wp_nga, 
+     input = 'status_cle')
+```
+
+## Extracting Water Point Data
+
+In this section, we will extract the water point records by using classes in *status_cle* field.
+
+### Extracting functional water point
+
+In the code chunk below, `filter()` of dplyr is used to select functional water points.
+
+```{r}
+wpt_functional <- wp_nga %>%
+  filter(status_cle %in%
+           c("Functional", 
+             "Functional but not in use",
+             "Functional but needs repair"))
+```
+
+```{r}
+freq(data=wpt_functional, 
+     input = 'status_cle')
+```
+
+### Extracting non-functional water point
+
+```{r}
+wpt_nonfunctional <- wp_nga %>%
+  filter(status_cle %in%
+           c("Abandoned/Decommissioned", 
+             "Abandoned",
+             "Non-Functional",
+             "Non functional due to dry season",
+             "Non-Functional due to dry season"))
+```
+
+```{r}
+freq(data=wpt_nonfunctional, 
+     input = 'status_cle')
+```
+
+### Extracting water point with unknown class
+
+```{r}
+wpt_unknown <- wp_nga %>%
+  filter(status_cle == "Unknown")
+```
+
+## Performing Point-in-Polygon Count
+
+```{r}
+nga_wp <- nga %>% 
+  mutate(`total wpt` = lengths(
+    st_intersects(nga, wp_nga))) %>%
+  mutate(`wpt functional` = lengths(
+    st_intersects(nga, wpt_functional))) %>%
+  mutate(`wpt non-functional` = lengths(
+    st_intersects(nga, wpt_nonfunctional))) %>%
+  mutate(`wpt unknown` = lengths(
+    st_intersects(nga, wpt_unknown)))
+```
+
+## Saving the Analytical Data Table
+
+```{r}
+nga_wp <- nga_wp %>%
+  mutate(pct_functional = `wpt functional`/`total wpt`) %>%
+  mutate(`pct_non-functional` = `wpt non-functional`/`total wpt`) %>%
+  select(3:4, 9:10, 18:23)
+```
+
+Things to learn from the code chunk above:
+
+-   `mutate()` of **dplyr** package is used to derive two fields namely *pct_functional* and *pct_non-functional*.
+
+-   to keep the file size small, `select()` of **dplyr** is used to retain only field 3,4,9,10, 18,19,20,21,22,and 23.
+
+Now, you have the tidy sf data table subsequent analysis. We will save the sf data table into rds format.
+
+```{r}
+write_rds(nga_wp, "geodata/nga_wp.rds")
+```
+
+## Visualising the spatial dsitribution of water points
+
+```{r}
+#| fig-width: 14
+#| fig-height: 12
+nga_wp <- read_rds("geodata/nga_wp.rds")
+total <- qtm(nga_wp, "total wpt")
+wp_functional <- qtm(nga_wp, "wpt functional")
+wp_nonfunctional <- qtm(nga_wp, "wpt non-functional")
+unknown <- qtm(nga_wp, "wpt unknown")
+
+tmap_arrange(total, wp_functional, wp_nonfunctional, unknown, asp=1, ncol=2)
+```
+
+## Global Spatial Autocorrelation
+
+### Computing Contiguity Spatial Weights
+
+```{r}
+wp_wm_q <- poly2nb(nga_wp,
+                    queen = TRUE)
+summary(wp_wm_q)
+```
+
+The summary report above shows that there are 774 area units in Nigeria. The most connected area unit has 14 neighbours. There are two area units with only one neighbours. There is 1 regoin with no links.
+
+### Row-standardised weights matrix
+
+Next, we need to assign weights to each neighboring polygon. In our case, each neighboring polygon will be assigned equal weight (style="W"). This is accomplished by assigning the fraction 1/(#ofneighbors) to each neighboring county then summing the weighted income values. While this is the most intuitive way to summaries the neighbors' values it has one drawback in that polygons along the edges of the study area will base their lagged values on fewer polygons thus potentially over- or under-estimating the true nature of the spatial autocorrelation in the data. For this example, we'll stick with the style="W" option for simplicity's sake but note that other more robust options are available, notably style="B".
+
+From the above, we know that there is one area has no neighbours, hence, the below code chunk includes codes to exclude the region with no links.
+
+```{r}
+wp_rswm_q <- nb2listw(wp_wm_q,
+                      style = "W",
+                      zero.policy = TRUE)
+print(nb2listw(neighbours = wp_wm_q, zero.policy = TRUE), zero.policy = TRUE)
+get.ZeroPolicyOption()
+set.ZeroPolicyOption(TRUE)
+get.ZeroPolicyOption()
+wp_rswm_q
+```
+
+### Global Spatial Autocorrelation: Moran's I
+
+### Maron's I test
+
+The Null Hypothesis:
+
+The non-functional water points are randomly distributed in Nigeria
+
+```{r}
+moran.test(nga_wp$`wpt non-functional`, 
+           listw=wp_rswm_q, 
+           zero.policy = TRUE, 
+           na.action=na.omit)
+```
+
+From the p-value \<2.2e-16, we reject the null hyphothesis at 95% significant level, and conclude that there is spatial pattern of non-functional water points in Nigeria.
+
+#### Computing Monte Carlo Moran's I
+
+Conducting Monte Carlo Stimulation to further confirm on Moran's I test.
+
+```{r}
+set.seed(1234)
+wp_nf_bperm= moran.mc(nga_wp$`wpt non-functional`, 
+                listw=wp_rswm_q, 
+                nsim=999, 
+                zero.policy = TRUE, 
+                na.action=na.omit)
+wp_nf_bperm
+```
+
+From the above simulation, p-value = 0.001, we can confirm that the null hyphothesis is rejected at 95% significant level.
+
+#### Visualising Monte Carlo Moran's I
+
+```{r}
+mean(wp_nf_bperm$res[1:999])
+```
+
+```{r}
+var(wp_nf_bperm$res[1:999])
+```
+
+```{r}
+summary(wp_nf_bperm$res[1:999])
+```
+
+```{r}
+hist(wp_nf_bperm$res, 
+     freq=TRUE, 
+     breaks=20, 
+     xlab="Simulated Moran's I")
+abline(v=0, 
+       col="red") 
+```
+
+**some conclusions here:**
+
+## Spatial Correlogram
+
+### Compute Moran's I correlogram
+
+In the code chunk below, sp.correlogram() of spdep package is used to compute a 6-lag spatial correlogram of GDPPC. The global spatial autocorrelation used in Moran's I. The plot() of base Graph is then used to plot the output.
+
+```{r}
+MI_corr_wp <- sp.correlogram(wp_wm_q, 
+                          nga_wp$`wpt non-functional`, 
+                          order=6, 
+                          method="I", 
+                          style="W")
+plot(MI_corr_wp)
+```
+
+```{r}
+print(MI_corr_wp)
+```
+
+**some conclusions here:**
+
+## Cluster and Outlier Analysis
+
+### Computing local Moran's I
+
+```{r}
+fips_wp <- order(nga_wp$ADM2_EN)
+localMI_wp <- localmoran(nga_wp$`wpt non-functional`, wp_rswm_q)
+head(localMI_wp)
+```
+
+The code chunk below list the content of the local Moran matrix derived by using [*printCoefmat()*](https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/printCoefmat).
+
+There are some duplicated names in ADM2_EN, we need to consolidate the duplicated names.
+
+```{r}
+table(duplicated(nga_wp$ADM2_EN))
+
+
+#printCoefmat(data.frame(
+  #localMI_wp[fips_wp,], 
+  #row.names=nga_wp$ADM2_EN[fips_wp]),
+  #check.names=FALSE)
+```
