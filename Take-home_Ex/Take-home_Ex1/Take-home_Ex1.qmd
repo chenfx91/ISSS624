@@ -142,6 +142,8 @@ wpt_nonfunctional <- wp_nga %>%
              "Non-Functional due to dry season"))
 ```
 
+From the above bar charts, we can see there are shocking amount of non-functional water points (31%) across Nigeria.
+
 ```{r}
 freq(data=wpt_nonfunctional, 
      input = 'status_cle')
@@ -216,7 +218,7 @@ unknown <- qtm(nga_wp, "wpt unknown")
 tmap_arrange(total, wp_functional, wp_nonfunctional, unknown, asp=1, ncol=2)
 ```
 
-From the above graphs, we can see that in the northern part of the country, we can see more functional water points while in the central and east sides, there are more non-functional water points.
+From the above graphs, we can see that in the northern part of the country, we can see more functional water points while in the central and east sides, there are more non-functional water points. However, it is not enough to identify which areas are the most serious and requires most immediate attentions and actions. Below spatial analysis is conducted to find out such areas.
 
 ## Global Spatial Autocorrelation
 
@@ -541,44 +543,70 @@ Comparing the 4 graphs, in the *LISAmap_wp*, places with Local Moran's I p-value
 
 ## Hot Spot and Cold Spot Area Analysis
 
+Besides the above clusters and outliers found, it can also be used to detect hot spot and/or cold spot areas.
+
 ### Getis and Ord's G-Statistics
+
+This section of analysis consists of the below three steps:
+
+-   Deriving spatial weight matrix
+
+-   Computing Gi statistics
+
+-   Mapping Gi Statistics
 
 ### Deriving distance-based weight matrix
 
+There are two types of distance-based proximity matrix, they are:
+
+-   fixed distance weight matrix; and
+
+-   adaptive distance weight matrix.
+
 #### Deriving the centroid
 
+We need points to associate with each polygon before making the connectivity graph. From the below code chunk, we are able to get the values for longitudes, latitudes and finally combine them into the same object.
+
 ```{r}
-longtitude_wp <- map_dbl(nga_wp$geometry,~st_centroid(.x)[[1]])
+longitude_wp <- map_dbl(nga_wp$geometry,~st_centroid(.x)[[1]])
 latitude_wp <- map_dbl(nga_wp$geometry,~st_centroid(.x)[[2]])
-coords_wp <- cbind(longtitude_wp,latitude_wp)
+coords_wp <- cbind(longitude_wp,latitude_wp)
 ```
 
 #### Determine the cut-off distance
 
-**need to check below**
+Firstly, we need to determine the upper limit for distance band by using the steps below:
+
+-   Return a matrix with the indices of points belonging to the set of the k nearest neighbours of each other by using [*knearneigh()*](https://r-spatial.github.io/spdep/reference/knearneigh.html) of **spdep**.
+
+-   Convert the knn object returned by *knearneigh()* into a neighbours list of class nb with a list of integer vectors containing neighbour region number ids by using [*knn2nb()*](https://r-spatial.github.io/spdep/reference/knn2nb.html).
+
+-   Return the length of neighbour relationship edges by using [*nbdists()*](https://r-spatial.github.io/spdep/reference/nbdists.html) of **spdep**. The function returns in the units of the coordinates if the coordinates are projected, in km otherwise.
+
+-   Remove the list structure of the returned object by using [**unlist()**](https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/unlist).
 
 ```{r}
 k1_wp <- knn2nb(knearneigh(coords_wp))
-k1dists_wp <- unlist(nbdists(k1_wp,coords_wp, longlat = TRUE))
+k1dists_wp <- unlist(nbdists(k1_wp,coords_wp, longlat = FALSE))
 summary(k1dists_wp)
 ```
 
-The summary report shows that the largest first nearest neighbour distance is 71.66 km, so using this as the upper threshold gives certainty that all units will have at least one neighbour.
+The summary report shows that the largest first nearest neighbour distance is 72139 m, so using this as the upper threshold gives certainty that all units will have at least one neighbour.
 
 #### Computing fixed distance weight matrix
 
 Now, we will compute the distance weight matrix by using [*dnearneigh()*](https://r-spatial.github.io/spdep/reference/dnearneigh.html) as shown in the code chunk below.
 
 ```{r}
-wm_d72 <- dnearneigh(coords_wp, 0, 72, longlat = TRUE)
-wm_d72
+wm_d72139 <- dnearneigh(coords_wp, 0, 72139, longlat = FALSE)
+wm_d72139
 ```
 
 Next, *nb2listw()* is used to convert the nb object into spatial weights object.
 
 ```{r}
-wm72_lw <- nb2listw(wm_d72, style = 'B')
-summary(wm72_lw)
+wm72139_lw <- nb2listw(wm_d72139, style = 'B')
+summary(wm72139_lw)
 ```
 
 #### Computing adpative distance weight matrix
@@ -604,7 +632,7 @@ summary(knn_lw_wp)
 ### Gi Statistics using fixed distance
 
 ```{r}
-gi.fixed_wp <- localG(nga_wp$`wpt non-functional`,wm72_lw)
+gi.fixed_wp <- localG(nga_wp$`wpt non-functional`,wm72139_lw)
 gi.fixed_wp
 ```
 
@@ -615,7 +643,7 @@ nga_wp.gi <- cbind(nga_wp, as.matrix(gi.fixed_wp)) %>%
   rename(gstat_fixed_wp = as.matrix.gi.fixed_wp.)
 ```
 
-**The code chunk above performs three tasks. First, it convert the output vector (i.e. *gi.fixed*) into r matrix object by using *as.matrix()*. Next, *cbind()* is used to join hunan\@data and *gi.fixed* matrix to produce a new SpatialPolygonDataFrame called *hunan.gi*. Lastly, the field name of the gi values is renamed to *gstat_fixed* by using *rename()*.**
+The code chunk above performs three tasks. First, it convert the output vector (i.e. *gi.fixed*) into r matrix object by using *as.matrix()*. Next, *cbind()* is used to join *nga_wp* and *gi.fixed* matrix to produce a new SpatialPolygonDataFrame called *nga_wp.gi*. Lastly, the field name of the gi values is renamed to *gstat_fixed* by using *rename()*.
 
 ### Mapping Gi values with fixed distance weights
 
@@ -633,12 +661,12 @@ tmap_arrange(wp_nonfunctional, Gimap_wp,
              asp=1, ncol=2)
 ```
 
-**Observations here:**
+From the Gi Map above, we can see that the hot spot area (i.e area with high number of non-functional water points) are situated across a large areas in the middle of Nigeria. The worst situation in the east side of the country, followed by the mid section, vertically down the country experiencing high number of non-functional water points.
 
 ### Gi statistics using adaptive distance
 
 ```{r}
-gi.adaptive_wp <- localG(nga_wp$`wpt non-functional`,wm72_lw)
+gi.adaptive_wp <- localG(nga_wp$`wpt non-functional`,knn_lw_wp)
 nga_wp.gi <- cbind(nga_wp, as.matrix(gi.adaptive_wp)) %>%
   rename(gstat_adaptive_wp = as.matrix.gi.adaptive_wp.)
 ```
@@ -657,5 +685,11 @@ tmap_arrange(wp_nonfunctional, Gimap_wp,
              asp=1, ncol=2)
 ```
 
-**Observations here:**
+Similar to the fixed distance weights Gi Map, the middle section of Nigeria also showing hot spot area across, however, some showing stronger Gi values. The adaptive distance weights Gi Map flagged several most severe areas in dark red to bring our attention to know that, resources in repairing the non-functional water points should be immediately brought to these locations.
+
+## Conclusions
+
+## Acknowledgements
+
+This analysis has referred heavily to the Chapter 4 of the learning resources prepared by Prof Kam Tin
 
