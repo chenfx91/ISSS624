@@ -191,10 +191,23 @@ write_rds(nga_wp, "geodata/nga_wp.rds")
 
 ## Visualising the spatial distribution of water points
 
+Note that there are three Projected Coordinate Systems of Nigeria, namely, EPSG: 26391, 26392, and 26303. We will need to check the current source data on its Coordinate system and do the transformation if necessary, this could be achieve from the code chunk below.
+
+```{r}
+st_crs(nga_wp)
+```
+
+From the print above, we can see that the EPSG code is wrong (currently is 4326), we need to transform it to the correct code to the *nga_wp* data frame, *st_transform()* of **sf** package is used as shown in the code chunk below.
+
+```{r}
+nga_wp <- st_transform(nga_wp,
+                       crs = 26391)
+st_crs(nga_wp)
+```
+
 ```{r}
 #| fig-width: 14
 #| fig-height: 12
-nga_wp <- read_rds("geodata/nga_wp.rds")
 total <- qtm(nga_wp, "total wpt")
 wp_functional <- qtm(nga_wp, "wpt functional")
 wp_nonfunctional <- qtm(nga_wp, "wpt non-functional")
@@ -249,7 +262,7 @@ moran.test(nga_wp$`wpt non-functional`,
            na.action=na.omit)
 ```
 
-From the p-value \<2.2e-16, we reject the null hyphothesis at 95% significant level, and conclude that there is spatial pattern of non-functional water points in Nigeria.
+From the p-value \<2.2e-16, we reject the null hyphothesis at 95% significant level, and conclude that there is spatial pattern of non-functional water points in Nigeria. From the Moran I (Z value) is positive, we can conclude that there are clusters of non-functional water points in Nigeria.
 
 #### Computing Monte Carlo Moran's I
 
@@ -268,6 +281,8 @@ wp_nf_bperm
 From the above simulation, p-value = 0.001, we can confirm that the null hyphothesis is rejected at 95% significant level.
 
 #### Visualising Monte Carlo Moran's I
+
+The code chunk below shows the distribution of the statistical values of the simulated Moran's I test as a histogram.
 
 ```{r}
 mean(wp_nf_bperm$res[1:999])
@@ -290,13 +305,15 @@ abline(v=0,
        col="red") 
 ```
 
-**some conclusions here:**
+From the histogram output above, we can see that the distribution follows a normal distribution with an outlier.
 
 ## Spatial Correlogram
 
+Spatial correlograms are great to examine patterns of spatial autocorrelation in your data or model residuals. They show how correlated are pairs of spatial observations when we increase the distance (lag) between them.
+
 ### Compute Moran's I correlogram
 
-In the code chunk below, sp.correlogram() of spdep package is used to compute a 6-lag spatial correlogram of GDPPC. The global spatial autocorrelation used in Moran's I. The plot() of base Graph is then used to plot the output.
+In the code chunk below, sp.correlogram() of spdep package is used to compute a 6-lag spatial correlogram of non-functional water points in Nigeria. The global spatial autocorrelation used in Moran's I. The plot() of base Graph is then used to plot the output.
 
 ```{r}
 MI_corr_wp <- sp.correlogram(wp_wm_q, 
@@ -311,9 +328,11 @@ plot(MI_corr_wp)
 print(MI_corr_wp)
 ```
 
-**some conclusions here:**
+From the above correlogram, we can see that with the lags increases, Moran's I value is more and more approaching to 0, and the observations will be more randomly over the study area.
 
 ## Cluster and Outlier Analysis
+
+Local Indicators of Spatial Association or LISA are statistics that evaluate the existence of clusters in the spatial arrangement of a given variable. In this section, we will apply LISA by using local Moran's I to detect cluster and/or outlier for the non-functional water points in Nigeria.
 
 ### Computing local Moran's I
 
@@ -334,6 +353,8 @@ printCoefmat(data.frame(
   row.names=nga_wp$ADM2_PCODE[fips_wp]),
   check.names=FALSE)
 ```
+
+From the plot, we can see that local Moran's I has similar results as above, Moran's I value is more and more approaching to 0, and the observations will be more randomly over the study area.
 
 ### Mapping local Moran's I p-values
 
@@ -395,9 +416,11 @@ pvalue_wp.map <- tm_shape(nga_wp.localMI_wp) +
 tmap_arrange(localMI_wp.map, pvalue_wp.map, asp=1, ncol=2)
 ```
 
+From the above 2 maps, we can see that areas with local Moran's I p-values less than 0.05, have higher clusters of non-functional water points. there is an inverse relationship between the 2 maps.
+
 ## Creating a LISA Cluster Map
 
-The LISA Cluster Map shows the significant locations color coded by type of spatial autocorrelation. The first step before we can generate the LISA cluster map is to plot the Mora scatterplot.
+The LISA Cluster Map shows the significant locations color coded by type of spatial autocorrelation. The first step before we can generate the LISA cluster map is to plot the Moran scatterplot.
 
 ### Plotting Moran scatterplot
 
@@ -412,7 +435,7 @@ nci_wp <- moran.plot(nga_wp$`wpt non-functional`, wp_rswm_q,
                   ylab="Spatially Lag Non-Functional Water Points")
 ```
 
-**Notice that the plot is split in 4 quadrants. The top right corner belongs to areas that have high GDPPC and are surrounded by other areas that have the average level of GDPPC. This are the high-high locations in the lesson slide.**
+Notice that the plot is split in 4 quadrants. The top right corner belongs to areas that have high number of non-functional water points and are surrounded by other areas that have high number of non-functional water points. This are the high-high locations**.**
 
 ### Plotting Moran scatterplot with standardised variable
 
@@ -434,9 +457,11 @@ nci_wp2 <- moran.plot(nga_wp$Z.NF_WP, wp_rswm_q,
                    ylab="Spatially Lag z-Non-Functional Water Points")
 ```
 
+Above scatterplot is with standardized values, this shows the average value of its neighbours' non-functional water points.
+
 ### Preparing LISA map classes
 
-The code chun below show the steps to prepare a LISA cluter map.
+The code chun below show the steps to prepare a LISA cluster map.
 
 ```{r}
 quadrant <- vector(mode="numeric",length=nrow(localMI_wp))
@@ -506,9 +531,13 @@ tmap_arrange(wp_nonfunctional, LISAmap_wp,
              asp=1, ncol=2)
 ```
 
-**We can also include the local Moran's I map and p-value map as shown below for easy comparison.**
+We can also include the local Moran's I map and p-value map as shown below for easy comparison.
 
-**Observation for the LISA map.**
+```{r}
+tmap_arrange(localMI_wp.map, pvalue_wp.map, asp=1, ncol=2)
+```
+
+Comparing the 4 graphs, in the *LISAmap_wp*, places with Local Moran's I p-values \< 0.05, it has shown colours, meaning there are spatial patterns of clusters and outliers. Similarly in the *LISAmap_wp*, clusters of non-functional water points (in red) are the areas in green in local Moran's I map. These presents that the computed index values are of statistical significance.
 
 ## Hot Spot and Cold Spot Area Analysis
 
