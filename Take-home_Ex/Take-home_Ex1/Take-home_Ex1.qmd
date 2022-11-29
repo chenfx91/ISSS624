@@ -5,13 +5,21 @@ editor: visual
 
 ## Overview
 
-Background
+### Background
 
-Problem Statement
+Water is a scarce resources especially for developing countries and Nigeria is one of them. According to an [article](https://www.downtoearth.org.in/news/africa/water-africa-s-gold-how-poverty-exacerbated-nigeria-s-acute-water-crisis-81416#:~:text=The%20crisis%20is%20compounded%20by,water%2Dborne%20diseases%20like%20cholera.) from DowntoEarth.org in 2022, more than 60% of the Nigeria's population do not have access to potable water, and people live in urban slums or rural parts of the countries both have difficulties in getting proper supply of water.
 
--   Are development evenly distributed in Nigeria?
+In order to understand the severity of the situation, we want to deep dive into the city levels of data *(amd2)* and visualise the spatial patterns of the water points, with focus on the *non-functional* ones, in Nigeria.
 
--   Is there sign of spatial clustering?
+### The analytical question
+
+As we know that Nigeria have serious issues with their water supply, we need to answer the below questions for this analysis on the non-functional water points:
+
+-   Are water points evenly distributed in Nigeria? if the answer is **No**. then,
+
+-   Is there sign of spatial clustering? if the answer is Yes. then,
+
+-   Where are these clusters?
 
 ## Getting Started
 
@@ -83,6 +91,8 @@ Thing to learn from the code chunk above.
 
 ### Recoding NA values into string
 
+In the code chunk below, `replace_na()` is used to recode all the *NA* values in *status_cle* field into *Unknown*.
+
 ```{r}
 wp_nga <- read_rds("geodata/wp_nga.rds") %>%
   mutate(status_cle = replace_na(status_cle,"unknown"))
@@ -119,6 +129,8 @@ freq(data=wpt_functional,
 ```
 
 ### Extracting non-functional water point
+
+In the code chunk below, `filter()` of dplyr is used to select non-functional water points.
 
 ```{r}
 wpt_nonfunctional <- wp_nga %>%
@@ -191,6 +203,8 @@ unknown <- qtm(nga_wp, "wpt unknown")
 tmap_arrange(total, wp_functional, wp_nonfunctional, unknown, asp=1, ncol=2)
 ```
 
+From the above graphs, we can see that in the northern part of the country, we can see more functional water points while in the central and east sides, there are more non-functional water points.
+
 ## Global Spatial Autocorrelation
 
 ### Computing Contiguity Spatial Weights
@@ -205,7 +219,7 @@ The summary report above shows that there are 774 area units in Nigeria. The mos
 
 ### Row-standardised weights matrix
 
-Next, we need to assign weights to each neighboring polygon. In our case, each neighboring polygon will be assigned equal weight (style="W"). This is accomplished by assigning the fraction 1/(#ofneighbors) to each neighboring county then summing the weighted income values. While this is the most intuitive way to summaries the neighbors' values it has one drawback in that polygons along the edges of the study area will base their lagged values on fewer polygons thus potentially over- or under-estimating the true nature of the spatial autocorrelation in the data. For this example, we'll stick with the style="W" option for simplicity's sake but note that other more robust options are available, notably style="B".
+Next, we need to assign weights to each neighboring polygon. In our case, each neighboring polygon will be assigned equal weight (style="W"). This is accomplished by assigning the fraction 1/(# of neighbors) to each neighboring county then summing the weighted income values. While this is the most intuitive way to summaries the neighbors' values it has one drawback in that polygons along the edges of the study area will base their lagged values on fewer polygons thus potentially over- or under-estimating the true nature of the spatial autocorrelation in the data. For this example, we'll stick with the style="W" option for simplicity's sake but note that other more robust options are available, notably style="B".
 
 From the above, we know that there is one area has no neighbours, hence, the below code chunk includes codes to exclude the region with no links.
 
