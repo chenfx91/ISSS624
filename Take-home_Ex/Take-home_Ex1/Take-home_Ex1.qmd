@@ -691,5 +691,4 @@ Similar to the fixed distance weights Gi Map, the middle section of Nigeria also
 
 ## Acknowledgements
 
-This analysis has referred heavily to the Chapter 4 of the learning resources prepared by Prof Kam Tin
-
+This analysis has referred heavily to the Chapter 4 of the [learning resources](https://r4gdsa.netlify.app/chap04.html#cluster-and-outlier-analysis) prepared by Prof Kam Tin Seong as well as countless whatsapp messages from our lovely coursemates that have guided me to the right direction.
