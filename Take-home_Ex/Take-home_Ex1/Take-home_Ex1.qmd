@@ -7,9 +7,9 @@ editor: visual
 
 ### Background
 
-Water is a scarce resources especially for developing countries and Nigeria is one of them. According to an [article](https://www.downtoearth.org.in/news/africa/water-africa-s-gold-how-poverty-exacerbated-nigeria-s-acute-water-crisis-81416#:~:text=The%20crisis%20is%20compounded%20by,water%2Dborne%20diseases%20like%20cholera.) from DowntoEarth.org in 2022, more than 60% of the Nigeria's population do not have access to potable water, and people live in urban slums or rural parts of the countries both have difficulties in getting proper supply of water.
+Water is a scarce resource especially for developing countries and Nigeria is one of them. According to an [article](https://www.downtoearth.org.in/news/africa/water-africa-s-gold-how-poverty-exacerbated-nigeria-s-acute-water-crisis-81416#:~:text=The%20crisis%20is%20compounded%20by,water%2Dborne%20diseases%20like%20cholera.) from DowntoEarth.org in 2022, more than 60% of the Nigeria's population do not have access to potable water, and people live in urban slums or rural parts of the countries both have difficulties in getting proper supply of water.
 
-In order to understand the severity of the situation, we want to deep dive into the city levels of data *(amd2)* and visualise the spatial patterns of the water points, with focus on the *non-functional* ones, in Nigeria.
+In order to understand the severity of the situation, we want to deep dive into the sub-district levels of data *(AMD2)* and visualise the spatial patterns of the water points, with focus on the *non-functional* ones, in Nigeria.
 
 ### The analytical question
 
@@ -142,7 +142,7 @@ wpt_nonfunctional <- wp_nga %>%
              "Non-Functional due to dry season"))
 ```
 
-From the above bar charts, we can see there are shocking amount of non-functional water points (31%) across Nigeria.
+From the above bar charts, we can see there are shocking amount of non-functional water points (33%) across Nigeria.
 
 ```{r}
 freq(data=wpt_nonfunctional, 
@@ -688,6 +688,26 @@ tmap_arrange(wp_nonfunctional, Gimap_wp,
 Similar to the fixed distance weights Gi Map, the middle section of Nigeria also showing hot spot area across, however, some showing stronger Gi values. The adaptive distance weights Gi Map flagged several most severe areas in dark red to bring our attention to know that, resources in repairing the non-functional water points should be immediately brought to these locations.
 
 ## Conclusions
+
+As stated in the start of this study, we want to visualize and understand the patterns of the non-functional water points in Nigeria. As mentioned in the Introduction, 60% of Nigerians do not have access to clean water.
+
+Water Stress is a serious issue that can give rise to many other social and health problems. From an [article](https://www.newsecuritybeat.org/2017/08/water-stress-instability-violent-extremism-nigeria/) in News Security Beat (King & Spangler, 2017), there is a vicious cycle of weak governance and lack of proper water management. Weak governance causes poverty, lack of funds to fix and functional water points. These uneven distribution of clean water resources, causes a lot of violence and tensions in the society. Limited access to clean water also causes Nigerians especially their children to fall sick easily, accordingly to UNICEF.
+
+In fact, Nigeria is one of the most water rich countries among other Africa countries, this [article](https://www.newsecuritybeat.org/2017/08/water-stress-instability-violent-extremism-nigeria/) entails how Nigeria government is unable to properly manage, use and protect their water resources for socioeconomic development and environmental. Many Non-governmental organizations (NGOs) have stepped in to help to monitor and improve the current situation.
+
+### Why This Matters
+
+Nigeria is also suffering from the climate change, coupled with limited fundings, the government should focus on repairing current substantial amount of non-functional water points (33% of total water points).
+
+This study helps to visualize the clusters of non-functional water points by considering its geographical lags, weights and neighbours through various statistical packages in R. The visualizations could help Nigerian government or NGOs to easily identify the sub-districts with most serious water problems and allocate its resources in the most effective way.
+
+This study ensures that the data is accurate and understandable for readers without much analytics or geographical experience so that organisations could easily take actions and to keep the readers in the loop.
+
+### Future Impact/Suggestions
+
+With continuing concerns over water issues in Nigeria, the poor has actually been hit the worst. Other than the water points data, we could also look into the population or GDP distributions across the countries, to check if the identified clusters of non-functional water points are aligned with the population characteristics.
+
+We could also load newer data whenever there is an update to examine if there is constant and progressive improvements of clusters of non-functional water points over a period of time.
 
 ## Acknowledgements
 
