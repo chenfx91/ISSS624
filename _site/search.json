@@ -397,5 +397,19 @@
     "title": "Take-home Exercise 1: Analysing and Visualising Spatial Patterns of Non-Functional Water Points",
     "section": "Acknowledgements",
     "text": "Acknowledgements\nThis analysis has referred heavily to the Chapter 4 of the learning resources prepared by Prof Kam Tin Seong as well as countless whatsapp messages from our lovely coursemates that have guided me to the right direction."
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex3/Hands-on_Ex3.html",
+    "href": "Hands-on_Ex/Hands-on_Ex3/Hands-on_Ex3.html",
+    "title": "Hands-on Exercise 3: Global and Local Measures of Spatial Autocorrelation",
+    "section": "",
+    "text": "In this hands-on exercise, you will learn how to compute Global and Local Measure of Spatial Autocorrelation (GLSA) by using spdep package. By the end to this hands-on exercise, you will be able to:\n\nimport geospatial data using appropriate function(s) of sf package,\nimport csv file using appropriate function of readr package,\nperform relational join using appropriate join function of dplyr package,\ncompute Global Spatial Autocorrelation (GSA) statistics by using appropriate functions of spdep package,\n\nplot Moran scatterplot,\ncompute and plot spatial correlogram using appropriate function of spdep package.\n\ncompute Local Indicator of Spatial Association (LISA) statistics for detecting clusters and outliers by using appropriate functions spdep package;\ncompute Getis-Ord's Gi-statistics for detecting hot spot or/and cold spot area by using appropriate functions of spdep package; and\nto visualise the analysis output by using tmap package."
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex3/Hands-on_Ex3.html#getting-started",
+    "href": "Hands-on_Ex/Hands-on_Ex3/Hands-on_Ex3.html#getting-started",
+    "title": "Hands-on Exercise 3: Global and Local Measures of Spatial Autocorrelation",
+    "section": "Getting Started",
+    "text": "Getting Started\n\nThe analytical question\nIn spatial policy, one of the main development objective of the local govenment and planners is to ensure equal distribution of development in the province. Our task in this study, hence, is to apply appropriate spatial statistical methods to discover if development are even distributed geographically. If the answer is No. Then, our next question will be \"is there sign of spatial clustering?\". And, if the answer for this question is yes, then our next question will be \"where are these clusters?\"\nIn this case study, we are interested to examine the spatial pattern of a selected development indicator (i.e. GDP per capita) of Hunan Provice, People Republic of China.(https://en.wikipedia.org/wiki/Hunan)\n\n\nThe study area and data\nTwo data sets will be used in this hands-on exercise, they are:\n\nHunan province administrative boundary layer at county level. This is a geospatial data set in ESRI shapefile format.\nHunan_2012.csv: This csv file contains selected Hunan's local development indicators in 2012.\n\n\n\nSetting the analytical tools\nBefore we get started, we need to ensure that spdep, sf, tmap and tidyverse packages of R are currently installed in your R.\n\nsf is use for importing and handling geospatial data in R,\ntidyverse is mainly use for wrangling attribute data in R,\nspdep will be used to compute spatial weights, global and local spatial autocorrelation statistics, and\ntmap will be used to prepare cartographic quality chropleth map.\n\nThe code chunk below is used to perform the following tasks:\n\ncreating a package list containing the necessary R packages,\nchecking if the R packages in the package list have been installed in R,\n\nif they have yet to be installed, RStudio will installed the missing packages,\n\nlaunching the packages into R environment.\n\n\npacman::p_load(sf, spdep, tmap, tidyverse)"
   }
 ]
