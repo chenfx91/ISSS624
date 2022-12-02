@@ -217,9 +217,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#the-study-area-and-data" id="toc-the-study-area-and-data" class="nav-link" data-scroll-target="#the-study-area-and-data">The study area and data</a></li>
   <li><a href="#setting-the-analytical-tools" id="toc-setting-the-analytical-tools" class="nav-link" data-scroll-target="#setting-the-analytical-tools">Setting the analytical tools</a></li>
   </ul></li>
-  <li><a href="#getting-the-data-into-r-environment" id="toc-getting-the-data-into-r-environment" class="nav-link" data-scroll-target="#getting-the-data-into-r-environment">Getting the Data into R Environment</a>
+  <li><a href="#data-import-and-preparation" id="toc-data-import-and-preparation" class="nav-link" data-scroll-target="#data-import-and-preparation">Data Import and Preparation</a>
   <ul class="collapse">
   <li><a href="#import-shapefile-into-r-environment" id="toc-import-shapefile-into-r-environment" class="nav-link" data-scroll-target="#import-shapefile-into-r-environment">Import shapefile into r environment</a></li>
+  <li><a href="#importing-aspatial-data-into-r-environment" id="toc-importing-aspatial-data-into-r-environment" class="nav-link" data-scroll-target="#importing-aspatial-data-into-r-environment">Importing aspatial data into R environment</a></li>
+  <li><a href="#derive-new-variables-using-dplyr-package" id="toc-derive-new-variables-using-dplyr-package" class="nav-link" data-scroll-target="#derive-new-variables-using-dplyr-package">Derive new variables using dplyr package</a></li>
+  </ul></li>
+  <li><a href="#exploratory-data-analysis-eda" id="toc-exploratory-data-analysis-eda" class="nav-link" data-scroll-target="#exploratory-data-analysis-eda">Exploratory Data Analysis (EDA)</a>
+  <ul class="collapse">
+  <li><a href="#eda-using-statistical-graphics" id="toc-eda-using-statistical-graphics" class="nav-link" data-scroll-target="#eda-using-statistical-graphics">EDA using statistical graphics</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -245,65 +251,293 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <section id="overview" class="level2">
 <h2 class="anchored" data-anchor-id="overview">Overview</h2>
-<p>In this hands-on exercise, you will learn how to compute Global and Local Measure of Spatial Autocorrelation (GLSA) by using <strong>spdep</strong> package. By the end to this hands-on exercise, you will be able to:</p>
+<p>In this hands-on exercise, you will gain hands-on experience on how to delineate homogeneous region by using geographically referenced multivariate data. There are two major analysis, namely:</p>
 <ul>
-<li><p>import geospatial data using appropriate function(s) of <strong>sf</strong> package,</p></li>
-<li><p>import csv file using appropriate function of <strong>readr</strong> package,</p></li>
-<li><p>perform relational join using appropriate join function of <strong>dplyr</strong> package,</p></li>
-<li><p>compute Global Spatial Autocorrelation (GSA) statistics by using appropriate functions of <strong>spdep</strong> package,</p>
-<ul>
-<li><p>plot Moran scatterplot,</p></li>
-<li><p>compute and plot spatial correlogram using appropriate function of <strong>spdep</strong> package.</p></li>
-</ul></li>
-<li><p>compute Local Indicator of Spatial Association (LISA) statistics for detecting clusters and outliers by using appropriate functions <strong>spdep</strong> package;</p></li>
-<li><p>compute Getis-Ord's Gi-statistics for detecting hot spot or/and cold spot area by using appropriate functions of <strong>spdep</strong> package; and</p></li>
-<li><p>to visualise the analysis output by using <strong>tmap</strong> package.</p></li>
+<li><p>hierarchical cluster analysis; and</p></li>
+<li><p>spatially constrained cluster analysis</p></li>
 </ul>
 </section>
 <section id="getting-started" class="level2">
 <h2 class="anchored" data-anchor-id="getting-started">Getting Started</h2>
 <section id="the-analytical-question" class="level3">
 <h3 class="anchored" data-anchor-id="the-analytical-question">The analytical question</h3>
-<p>In spatial policy, one of the main development objective of the local govenment and planners is to ensure equal distribution of development in the province. Our task in this study, hence, is to apply appropriate spatial statistical methods to discover if development are even distributed geographically. If the answer is <strong>No</strong>. Then, our next question will be "is there sign of spatial clustering?". And, if the answer for this question is yes, then our next question will be "where are these clusters?"</p>
-<p>In this case study, we are interested to examine the spatial pattern of a selected development indicator (i.e.&nbsp;GDP per capita) of Hunan Provice, People Republic of China.(https://en.wikipedia.org/wiki/Hunan)</p>
+<p>In geobusiness and spatial policy, it is a common practice to delineate the market or planning area into homogeneous regions by using multivariate data. In this hands-on exercise, we are interested to delineate <a href="https://en.wikipedia.org/wiki/Shan_State">Shan State</a>, <a href="https://en.wikipedia.org/wiki/Myanmar">Myanmar</a> into homogeneous regions by using multiple Information and Communication technology (ICT) measures, namely: Radio, Television, Land line phone, Mobile phone, Computer, and Internet at home.</p>
 </section>
 <section id="the-study-area-and-data" class="level3">
 <h3 class="anchored" data-anchor-id="the-study-area-and-data">The study area and data</h3>
-<p>Two data sets will be used in this hands-on exercise, they are:</p>
+<p>Two data sets will be used in this study. They are:</p>
 <ul>
-<li><p>Hunan province administrative boundary layer at county level. This is a geospatial data set in ESRI shapefile format.</p></li>
-<li><p>Hunan_2012.csv: This csv file contains selected Hunan's local development indicators in 2012.</p></li>
+<li><p>Myanmar Township Boundary Data (i.e.&nbsp;<em>myanmar_township_boundaries</em>) : This is a GIS data in ESRI shapefile format. It consists of township boundary information of Myanmar. The spatial data are captured in polygon features.</p></li>
+<li><p><em>Shan-ICT.csv</em>: This is an extract of <a href="https://myanmar.unfpa.org/en/publications/2014-population-and-housing-census-myanmar-data-sheet"><strong>The 2014 Myanmar Population and Housing Census Myanmar</strong></a> at the township level.</p></li>
 </ul>
+<p>Both data sets are download from <a href="http://themimu.info/">Myanmar Information Management Unit (MIMU)</a></p>
 </section>
 <section id="setting-the-analytical-tools" class="level3">
 <h3 class="anchored" data-anchor-id="setting-the-analytical-tools">Setting the analytical tools</h3>
-<p>Before we get started, we need to ensure that <strong>spdep</strong>, <strong>sf</strong>, <strong>tmap</strong> and <strong>tidyverse</strong> packages of R are currently installed in your R.</p>
+<p>Before we get started, it is important for us to install the necessary R packages into R and launch these R packages into R environment.</p>
+<p>The R packages needed for this exercise are as follows:</p>
 <ul>
-<li><p>sf is use for importing and handling geospatial data in R,</p></li>
-<li><p>tidyverse is mainly use for wrangling attribute data in R,</p></li>
-<li><p>spdep will be used to compute spatial weights, global and local spatial autocorrelation statistics, and</p></li>
-<li><p>tmap will be used to prepare cartographic quality chropleth map.</p></li>
-</ul>
-<p>The code chunk below is used to perform the following tasks:</p>
+<li><p>Spatial data handling</p>
 <ul>
-<li><p>creating a package list containing the necessary R packages,</p></li>
-<li><p>checking if the R packages in the package list have been installed in R,</p>
-<ul>
-<li>if they have yet to be installed, RStudio will installed the missing packages,</li>
+<li><strong>sf</strong>, <strong>rgdal</strong> and <strong>spdep</strong></li>
 </ul></li>
-<li><p>launching the packages into R environment.</p></li>
+<li><p>Attribute data handling</p>
+<ul>
+<li><strong>tidyverse</strong>, especially <strong>readr</strong>, <strong>ggplot2</strong> and <strong>dplyr</strong></li>
+</ul></li>
+<li><p>Choropleth mapping</p>
+<ul>
+<li><strong>tmap</strong></li>
+</ul></li>
+<li><p>Multivariate data visualisation and analysis</p>
+<ul>
+<li><strong>coorplot</strong>, <strong>ggpubr</strong>, and <strong>heatmaply</strong></li>
+</ul></li>
+<li><p>Cluster analysis</p>
+<ul>
+<li><p><strong>cluster</strong></p></li>
+<li><p><strong>ClustGeo</strong></p></li>
+</ul></li>
 </ul>
+<p>The code chunks below installs and launches these R packages into R environment.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(sf, spdep, tmap, tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(rgdal, spdep, tmap, sf, </span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>               ggpubr, cluster, factoextra, NbClust,</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>               heatmaply, corrplot, psych, tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
-<section id="getting-the-data-into-r-environment" class="level2">
-<h2 class="anchored" data-anchor-id="getting-the-data-into-r-environment">Getting the Data into R Environment</h2>
-<p>In this section, you will learn how to bring a geospatial data and its associated attribute table into R environment. The geospatial data is in ESRI shapefile format and the attribute table is in csv fomat.</p>
+<section id="data-import-and-preparation" class="level2">
+<h2 class="anchored" data-anchor-id="data-import-and-preparation">Data Import and Preparation</h2>
 <section id="import-shapefile-into-r-environment" class="level3">
 <h3 class="anchored" data-anchor-id="import-shapefile-into-r-environment">Import shapefile into r environment</h3>
-<p>The code chunk below uses <a href="https://r-spatial.github.io/sf/reference/st_read.html"><em>st_read()</em></a> of <strong>sf</strong> package to import Hunan shapefile into R. The imported shapefile will be <strong>simple features</strong> Object of <strong>sf</strong>.</p>
+<p>In this section, you will import Myanmar Township Boundary GIS data and its associated attrbiute table into R environment.</p>
+<p>The Myanmar Township Boundary GIS data is in ESRI shapefile format. It will be imported into R environment by using the <a href="https://www.rdocumentation.org/packages/sf/versions/0.7-2/topics/st_read"><em>st_read()</em></a> function of <strong>sf</strong>.</p>
+<p>The code chunks used are shown below:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>shan_sf <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="at">dsn =</span> <span class="st">"data/geospatial"</span>, </span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">layer =</span> <span class="st">"myanmar_township_boundaries"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(ST <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Shan (East)"</span>, <span class="st">"Shan (North)"</span>, <span class="st">"Shan (South)"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Reading layer `myanmar_township_boundaries' from data source 
+  `C:\chenfx91\ISSS624\Hands-on_Ex\Hands-on_Ex3\data\geospatial' 
+  using driver `ESRI Shapefile'
+Simple feature collection with 330 features and 14 fields
+Geometry type: MULTIPOLYGON
+Dimension:     XY
+Bounding box:  xmin: 92.17275 ymin: 9.671252 xmax: 101.1699 ymax: 28.54554
+Geodetic CRS:  WGS 84</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>shan_sf</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Simple feature collection with 55 features and 14 fields
+Geometry type: MULTIPOLYGON
+Dimension:     XY
+Bounding box:  xmin: 96.15107 ymin: 19.29932 xmax: 101.1699 ymax: 24.15907
+Geodetic CRS:  WGS 84
+First 10 features:
+   OBJECTID           ST ST_PCODE       DT   DT_PCODE        TS  TS_PCODE
+1       163 Shan (North)   MMR015  Mongmit MMR015D008   Mongmit MMR015017
+2       203 Shan (South)   MMR014 Taunggyi MMR014D001   Pindaya MMR014006
+3       240 Shan (South)   MMR014 Taunggyi MMR014D001   Ywangan MMR014007
+4       106 Shan (South)   MMR014 Taunggyi MMR014D001  Pinlaung MMR014009
+5        72 Shan (North)   MMR015  Mongmit MMR015D008    Mabein MMR015018
+6        40 Shan (South)   MMR014 Taunggyi MMR014D001     Kalaw MMR014005
+7       194 Shan (South)   MMR014 Taunggyi MMR014D001     Pekon MMR014010
+8       159 Shan (South)   MMR014 Taunggyi MMR014D001  Lawksawk MMR014008
+9        61 Shan (North)   MMR015  Kyaukme MMR015D003 Nawnghkio MMR015013
+10      124 Shan (North)   MMR015  Kyaukme MMR015D003   Kyaukme MMR015012
+                 ST_2            LABEL2 SELF_ADMIN ST_RG T_NAME_WIN T_NAME_M3
+1  Shan State (North)    Mongmit\n61072       &lt;NA&gt; State   rdk;rdwf      မိုးမိတ်
+2  Shan State (South)    Pindaya\n77769       Danu State     yif;w,     ပင်းတယ
+3  Shan State (South)    Ywangan\n76933       Danu State      &amp;GmiH       ရွာငံ
+4  Shan State (South)  Pinlaung\n162537       Pa-O State  yifavmif;   ပင်လောင်း
+5  Shan State (North)     Mabein\n35718       &lt;NA&gt; State     rbdrf;      မဘိမ်း
+6  Shan State (South)     Kalaw\n163138       &lt;NA&gt; State       uavm      ကလော
+7  Shan State (South)      Pekon\n94226       &lt;NA&gt; State     z,fcHk       ဖယ်ခုံ
+8  Shan State (South)          Lawksawk       &lt;NA&gt; State   &amp;yfapmuf    ရပ်စောက်
+9  Shan State (North) Nawnghkio\n128357       &lt;NA&gt; State  aemifcsdK    နောင်ချို
+10 Shan State (North)   Kyaukme\n172874       &lt;NA&gt; State   ausmufrJ    ကျောက်မဲ
+       AREA                       geometry
+1  2703.611 MULTIPOLYGON (((96.96001 23...
+2   629.025 MULTIPOLYGON (((96.7731 21....
+3  2984.377 MULTIPOLYGON (((96.78483 21...
+4  3396.963 MULTIPOLYGON (((96.49518 20...
+5  5034.413 MULTIPOLYGON (((96.66306 24...
+6  1456.624 MULTIPOLYGON (((96.49518 20...
+7  2073.513 MULTIPOLYGON (((97.14738 19...
+8  5145.659 MULTIPOLYGON (((96.94981 22...
+9  3271.537 MULTIPOLYGON (((96.75648 22...
+10 3920.869 MULTIPOLYGON (((96.95498 22...</code></pre>
+</div>
+</div>
+<p>Notice that sf.data.frame is conformed to Hardy Wickham's <a href="https://edzer.github.io/rstudio_conf/#1">tidy</a> framework.</p>
+<p>Since <em>shan_sf</em> is conformed to tidy framework, we can also <em>glimpse()</em> to reveal the data type of it's fields.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(shan_sf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 55
+Columns: 15
+$ OBJECTID   &lt;dbl&gt; 163, 203, 240, 106, 72, 40, 194, 159, 61, 124, 71, 155, 101…
+$ ST         &lt;chr&gt; "Shan (North)", "Shan (South)", "Shan (South)", "Shan (Sout…
+$ ST_PCODE   &lt;chr&gt; "MMR015", "MMR014", "MMR014", "MMR014", "MMR015", "MMR014",…
+$ DT         &lt;chr&gt; "Mongmit", "Taunggyi", "Taunggyi", "Taunggyi", "Mongmit", "…
+$ DT_PCODE   &lt;chr&gt; "MMR015D008", "MMR014D001", "MMR014D001", "MMR014D001", "MM…
+$ TS         &lt;chr&gt; "Mongmit", "Pindaya", "Ywangan", "Pinlaung", "Mabein", "Kal…
+$ TS_PCODE   &lt;chr&gt; "MMR015017", "MMR014006", "MMR014007", "MMR014009", "MMR015…
+$ ST_2       &lt;chr&gt; "Shan State (North)", "Shan State (South)", "Shan State (So…
+$ LABEL2     &lt;chr&gt; "Mongmit\n61072", "Pindaya\n77769", "Ywangan\n76933", "Pinl…
+$ SELF_ADMIN &lt;chr&gt; NA, "Danu", "Danu", "Pa-O", NA, NA, NA, NA, NA, NA, NA, NA,…
+$ ST_RG      &lt;chr&gt; "State", "State", "State", "State", "State", "State", "Stat…
+$ T_NAME_WIN &lt;chr&gt; "rdk;rdwf", "yif;w,", "&amp;GmiH", "yifavmif;", "rbdrf;", "uavm…
+$ T_NAME_M3  &lt;chr&gt; "မိုးမိတ်", "ပင်းတယ", "ရွာငံ", "ပင်လောင်း", "မဘိမ်း", "ကလော", "ဖယ်ခုံ", "…
+$ AREA       &lt;dbl&gt; 2703.611, 629.025, 2984.377, 3396.963, 5034.413, 1456.624, …
+$ geometry   &lt;MULTIPOLYGON [°]&gt; MULTIPOLYGON (((96.96001 23..., MULTIPOLYGON (…</code></pre>
+</div>
+</div>
+</section>
+<section id="importing-aspatial-data-into-r-environment" class="level3">
+<h3 class="anchored" data-anchor-id="importing-aspatial-data-into-r-environment">Importing aspatial data into R environment</h3>
+<p>The csv file will be import using <em>read_csv</em> function of <strong>readr</strong> package.</p>
+<p>The code chunks used are shown below:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>ict <span class="ot">&lt;-</span> <span class="fu">read_csv</span> (<span class="st">"data/aspatial/Shan-ICT.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 55 Columns: 11
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr (4): District Pcode, District Name, Township Pcode, Township Name
+dbl (7): Total households, Radio, Television, Land line phone, Mobile phone,...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(ict)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> District Pcode     District Name      Township Pcode     Township Name     
+ Length:55          Length:55          Length:55          Length:55         
+ Class :character   Class :character   Class :character   Class :character  
+ Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+                                                                            
+                                                                            
+                                                                            
+ Total households     Radio         Television    Land line phone 
+ Min.   : 3318    Min.   :  115   Min.   :  728   Min.   :  20.0  
+ 1st Qu.: 8711    1st Qu.: 1260   1st Qu.: 3744   1st Qu.: 266.5  
+ Median :13685    Median : 2497   Median : 6117   Median : 695.0  
+ Mean   :18369    Mean   : 4487   Mean   :10183   Mean   : 929.9  
+ 3rd Qu.:23471    3rd Qu.: 6192   3rd Qu.:13906   3rd Qu.:1082.5  
+ Max.   :82604    Max.   :30176   Max.   :62388   Max.   :6736.0  
+  Mobile phone      Computer      Internet at home
+ Min.   :  150   Min.   :  20.0   Min.   :   8.0  
+ 1st Qu.: 2037   1st Qu.: 121.0   1st Qu.:  88.0  
+ Median : 3559   Median : 244.0   Median : 316.0  
+ Mean   : 6470   Mean   : 575.5   Mean   : 760.2  
+ 3rd Qu.: 7177   3rd Qu.: 507.0   3rd Qu.: 630.5  
+ Max.   :48461   Max.   :6705.0   Max.   :9746.0  </code></pre>
+</div>
+</div>
+<p>There are a total of eleven fields and 55 observation in the tibble data.frame.</p>
+</section>
+<section id="derive-new-variables-using-dplyr-package" class="level3">
+<h3 class="anchored" data-anchor-id="derive-new-variables-using-dplyr-package">Derive new variables using dplyr package</h3>
+<p>The unit of measurement of the values are number of household. Using these values directly will be bias by the underlying total number of households. In general, the townships with relatively higher total number of households will also have higher number of households owning radio, TV, etc.</p>
+<p>In order to overcome this problem, we will derive the penetration rate of each ICT variable by using the code chunk below.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>ict_derived <span class="ot">&lt;-</span> ict <span class="sc">%&gt;%</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">RADIO_PR</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">Radio</span><span class="st">`</span><span class="sc">/</span><span class="st">`</span><span class="at">Total households</span><span class="st">`</span><span class="sc">*</span><span class="dv">1000</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">TV_PR</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">Television</span><span class="st">`</span><span class="sc">/</span><span class="st">`</span><span class="at">Total households</span><span class="st">`</span><span class="sc">*</span><span class="dv">1000</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">LLPHONE_PR</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">Land line phone</span><span class="st">`</span><span class="sc">/</span><span class="st">`</span><span class="at">Total households</span><span class="st">`</span><span class="sc">*</span><span class="dv">1000</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">MPHONE_PR</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">Mobile phone</span><span class="st">`</span><span class="sc">/</span><span class="st">`</span><span class="at">Total households</span><span class="st">`</span><span class="sc">*</span><span class="dv">1000</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">COMPUTER_PR</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">Computer</span><span class="st">`</span><span class="sc">/</span><span class="st">`</span><span class="at">Total households</span><span class="st">`</span><span class="sc">*</span><span class="dv">1000</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">INTERNET_PR</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">Internet at home</span><span class="st">`</span><span class="sc">/</span><span class="st">`</span><span class="at">Total households</span><span class="st">`</span><span class="sc">*</span><span class="dv">1000</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">`</span><span class="at">DT_PCODE</span><span class="st">`</span> <span class="ot">=</span><span class="st">`</span><span class="at">District Pcode</span><span class="st">`</span>,<span class="st">`</span><span class="at">DT</span><span class="st">`</span><span class="ot">=</span><span class="st">`</span><span class="at">District Name</span><span class="st">`</span>,</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">TS_PCODE</span><span class="st">`</span><span class="ot">=</span><span class="st">`</span><span class="at">Township Pcode</span><span class="st">`</span>, <span class="st">`</span><span class="at">TS</span><span class="st">`</span><span class="ot">=</span><span class="st">`</span><span class="at">Township Name</span><span class="st">`</span>,</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">TT_HOUSEHOLDS</span><span class="st">`</span><span class="ot">=</span><span class="st">`</span><span class="at">Total households</span><span class="st">`</span>,</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">RADIO</span><span class="st">`</span><span class="ot">=</span><span class="st">`</span><span class="at">Radio</span><span class="st">`</span>, <span class="st">`</span><span class="at">TV</span><span class="st">`</span><span class="ot">=</span><span class="st">`</span><span class="at">Television</span><span class="st">`</span>, </span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">LLPHONE</span><span class="st">`</span><span class="ot">=</span><span class="st">`</span><span class="at">Land line phone</span><span class="st">`</span>, <span class="st">`</span><span class="at">MPHONE</span><span class="st">`</span><span class="ot">=</span><span class="st">`</span><span class="at">Mobile phone</span><span class="st">`</span>,</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">COMPUTER</span><span class="st">`</span><span class="ot">=</span><span class="st">`</span><span class="at">Computer</span><span class="st">`</span>, <span class="st">`</span><span class="at">INTERNET</span><span class="st">`</span><span class="ot">=</span><span class="st">`</span><span class="at">Internet at home</span><span class="st">`</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(ict_derived)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   DT_PCODE              DT              TS_PCODE              TS           
+ Length:55          Length:55          Length:55          Length:55         
+ Class :character   Class :character   Class :character   Class :character  
+ Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+                                                                            
+                                                                            
+                                                                            
+ TT_HOUSEHOLDS       RADIO             TV           LLPHONE      
+ Min.   : 3318   Min.   :  115   Min.   :  728   Min.   :  20.0  
+ 1st Qu.: 8711   1st Qu.: 1260   1st Qu.: 3744   1st Qu.: 266.5  
+ Median :13685   Median : 2497   Median : 6117   Median : 695.0  
+ Mean   :18369   Mean   : 4487   Mean   :10183   Mean   : 929.9  
+ 3rd Qu.:23471   3rd Qu.: 6192   3rd Qu.:13906   3rd Qu.:1082.5  
+ Max.   :82604   Max.   :30176   Max.   :62388   Max.   :6736.0  
+     MPHONE         COMPUTER         INTERNET         RADIO_PR     
+ Min.   :  150   Min.   :  20.0   Min.   :   8.0   Min.   : 21.05  
+ 1st Qu.: 2037   1st Qu.: 121.0   1st Qu.:  88.0   1st Qu.:138.95  
+ Median : 3559   Median : 244.0   Median : 316.0   Median :210.95  
+ Mean   : 6470   Mean   : 575.5   Mean   : 760.2   Mean   :215.68  
+ 3rd Qu.: 7177   3rd Qu.: 507.0   3rd Qu.: 630.5   3rd Qu.:268.07  
+ Max.   :48461   Max.   :6705.0   Max.   :9746.0   Max.   :484.52  
+     TV_PR         LLPHONE_PR       MPHONE_PR       COMPUTER_PR    
+ Min.   :116.0   Min.   :  2.78   Min.   : 36.42   Min.   : 3.278  
+ 1st Qu.:450.2   1st Qu.: 22.84   1st Qu.:190.14   1st Qu.:11.832  
+ Median :517.2   Median : 37.59   Median :305.27   Median :18.970  
+ Mean   :509.5   Mean   : 51.09   Mean   :314.05   Mean   :24.393  
+ 3rd Qu.:606.4   3rd Qu.: 69.72   3rd Qu.:428.43   3rd Qu.:29.897  
+ Max.   :842.5   Max.   :181.49   Max.   :735.43   Max.   :92.402  
+  INTERNET_PR     
+ Min.   :  1.041  
+ 1st Qu.:  8.617  
+ Median : 22.829  
+ Mean   : 30.644  
+ 3rd Qu.: 41.281  
+ Max.   :117.985  </code></pre>
+</div>
+</div>
+<p>Notice that six new fields have been added into the data.frame. They are RADIO_PR, TV_PR, LLPHONE_PR, MPHONE_PR, COMPUTER_PR, and INTERNET_PR.</p>
+</section>
+</section>
+<section id="exploratory-data-analysis-eda" class="level2">
+<h2 class="anchored" data-anchor-id="exploratory-data-analysis-eda">Exploratory Data Analysis (EDA)</h2>
+<section id="eda-using-statistical-graphics" class="level3">
+<h3 class="anchored" data-anchor-id="eda-using-statistical-graphics">EDA using statistical graphics</h3>
+<p>We can plot the distribution of the variables (i.e.&nbsp;Number of households with radio) by using appropriate Exploratory Data Analysis (EDA) as shown in the code chunk below.</p>
+<p>Histogram is useful to identify the overall distribution of the data values (i.e.&nbsp;left skew, right skew or normal distribution)</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>ict_derived, </span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x=</span><span class="st">`</span><span class="at">RADIO</span><span class="st">`</span>)) <span class="sc">+</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins=</span><span class="dv">20</span>, </span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">color=</span><span class="st">"black"</span>, </span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>                 <span class="at">fill=</span><span class="st">"light blue"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Hands-on_Ex3_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Boxplot is useful to detect if there are outliers.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>ict_derived, </span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x=</span><span class="st">`</span><span class="at">RADIO</span><span class="st">`</span>)) <span class="sc">+</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">color=</span><span class="st">"black"</span>, </span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>               <span class="at">fill=</span><span class="st">"light blue"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Hands-on_Ex3_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Next, we will also plotting the distribution of the newly derived variables (i.e.&nbsp;Radio penetration rate) by using the code chunk below.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>ict_derived, </span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x=</span><span class="st">`</span><span class="at">RADIO_PR</span><span class="st">`</span>)) <span class="sc">+</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins=</span><span class="dv">20</span>, </span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">color=</span><span class="st">"black"</span>, </span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>                 <span class="at">fill=</span><span class="st">"light blue"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Hands-on_Ex3_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
 
 
 </section>

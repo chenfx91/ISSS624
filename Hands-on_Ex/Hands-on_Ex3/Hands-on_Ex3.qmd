@@ -5,74 +5,163 @@ editor: visual
 
 ## Overview
 
-In this hands-on exercise, you will learn how to compute Global and Local Measure of Spatial Autocorrelation (GLSA) by using **spdep** package. By the end to this hands-on exercise, you will be able to:
+In this hands-on exercise, you will gain hands-on experience on how to delineate homogeneous region by using geographically referenced multivariate data. There are two major analysis, namely:
 
--   import geospatial data using appropriate function(s) of **sf** package,
+-   hierarchical cluster analysis; and
 
--   import csv file using appropriate function of **readr** package,
-
--   perform relational join using appropriate join function of **dplyr** package,
-
--   compute Global Spatial Autocorrelation (GSA) statistics by using appropriate functions of **spdep** package,
-
-    -   plot Moran scatterplot,
-
-    -   compute and plot spatial correlogram using appropriate function of **spdep** package.
-
--   compute Local Indicator of Spatial Association (LISA) statistics for detecting clusters and outliers by using appropriate functions **spdep** package;
-
--   compute Getis-Ord\'s Gi-statistics for detecting hot spot or/and cold spot area by using appropriate functions of **spdep** package; and
-
--   to visualise the analysis output by using **tmap** package.
+-   spatially constrained cluster analysis
 
 ## Getting Started
 
 ### The analytical question
 
-In spatial policy, one of the main development objective of the local govenment and planners is to ensure equal distribution of development in the province. Our task in this study, hence, is to apply appropriate spatial statistical methods to discover if development are even distributed geographically. If the answer is **No**. Then, our next question will be \"is there sign of spatial clustering?\". And, if the answer for this question is yes, then our next question will be \"where are these clusters?\"
-
-In this case study, we are interested to examine the spatial pattern of a selected development indicator (i.e. GDP per capita) of Hunan Provice, People Republic of China.(https://en.wikipedia.org/wiki/Hunan)
+In geobusiness and spatial policy, it is a common practice to delineate the market or planning area into homogeneous regions by using multivariate data. In this hands-on exercise, we are interested to delineate [Shan State](https://en.wikipedia.org/wiki/Shan_State), [Myanmar](https://en.wikipedia.org/wiki/Myanmar) into homogeneous regions by using multiple Information and Communication technology (ICT) measures, namely: Radio, Television, Land line phone, Mobile phone, Computer, and Internet at home.
 
 ### The study area and data
 
-Two data sets will be used in this hands-on exercise, they are:
+Two data sets will be used in this study. They are:
 
--   Hunan province administrative boundary layer at county level. This is a geospatial data set in ESRI shapefile format.
+-   Myanmar Township Boundary Data (i.e. *myanmar_township_boundaries*) : This is a GIS data in ESRI shapefile format. It consists of township boundary information of Myanmar. The spatial data are captured in polygon features.
 
--   Hunan_2012.csv: This csv file contains selected Hunan\'s local development indicators in 2012.
+-   *Shan-ICT.csv*: This is an extract of [**The 2014 Myanmar Population and Housing Census Myanmar**](https://myanmar.unfpa.org/en/publications/2014-population-and-housing-census-myanmar-data-sheet) at the township level.
+
+Both data sets are download from [Myanmar Information Management Unit (MIMU)](http://themimu.info/)
 
 ### Setting the analytical tools
 
-Before we get started, we need to ensure that **spdep**, **sf**, **tmap** and **tidyverse** packages of R are currently installed in your R.
+Before we get started, it is important for us to install the necessary R packages into R and launch these R packages into R environment.
 
--   sf is use for importing and handling geospatial data in R,
+The R packages needed for this exercise are as follows:
 
--   tidyverse is mainly use for wrangling attribute data in R,
+-   Spatial data handling
 
--   spdep will be used to compute spatial weights, global and local spatial autocorrelation statistics, and
+    -   **sf**, **rgdal** and **spdep**
 
--   tmap will be used to prepare cartographic quality chropleth map.
+-   Attribute data handling
 
-The code chunk below is used to perform the following tasks:
+    -   **tidyverse**, especially **readr**, **ggplot2** and **dplyr**
 
--   creating a package list containing the necessary R packages,
+-   Choropleth mapping
 
--   checking if the R packages in the package list have been installed in R,
+    -   **tmap**
 
-    -   if they have yet to be installed, RStudio will installed the missing packages,
+-   Multivariate data visualisation and analysis
 
--   launching the packages into R environment.
+    -   **coorplot**, **ggpubr**, and **heatmaply**
+
+-   Cluster analysis
+
+    -   **cluster**
+
+    -   **ClustGeo**
+
+The code chunks below installs and launches these R packages into R environment.
 
 ```{r}
-pacman::p_load(sf, spdep, tmap, tidyverse)
+pacman::p_load(rgdal, spdep, tmap, sf, 
+               ggpubr, cluster, factoextra, NbClust,
+               heatmaply, corrplot, psych, tidyverse)
 ```
 
-## Getting the Data into R Environment
-
-In this section, you will learn how to bring a geospatial data and its associated attribute table into R environment. The geospatial data is in ESRI shapefile format and the attribute table is in csv fomat.
+## Data Import and Preparation
 
 ### Import shapefile into r environment
 
-The code chunk below uses [*st_read()*](https://r-spatial.github.io/sf/reference/st_read.html) of **sf** package to import Hunan shapefile into R. The imported shapefile will be **simple features** Object of **sf**.
+In this section, you will import Myanmar Township Boundary GIS data and its associated attrbiute table into R environment.
 
+The Myanmar Township Boundary GIS data is in ESRI shapefile format. It will be imported into R environment by using the [*st_read()*](https://www.rdocumentation.org/packages/sf/versions/0.7-2/topics/st_read) function of **sf**.
 
+The code chunks used are shown below:
+
+```{r}
+shan_sf <- st_read(dsn = "data/geospatial", 
+                   layer = "myanmar_township_boundaries") %>%
+  filter(ST %in% c("Shan (East)", "Shan (North)", "Shan (South)"))
+
+shan_sf
+```
+
+Notice that sf.data.frame is conformed to Hardy Wickham\'s [tidy](https://edzer.github.io/rstudio_conf/#1) framework.
+
+Since *shan_sf* is conformed to tidy framework, we can also *glimpse()* to reveal the data type of it\'s fields.
+
+```{r}
+glimpse(shan_sf)
+```
+
+### Importing aspatial data into R environment
+
+The csv file will be import using *read_csv* function of **readr** package.
+
+The code chunks used are shown below:
+
+```{r}
+ict <- read_csv ("data/aspatial/Shan-ICT.csv")
+
+summary(ict)
+```
+
+There are a total of eleven fields and 55 observation in the tibble data.frame.
+
+### Derive new variables using dplyr package
+
+The unit of measurement of the values are number of household. Using these values directly will be bias by the underlying total number of households. In general, the townships with relatively higher total number of households will also have higher number of households owning radio, TV, etc.
+
+In order to overcome this problem, we will derive the penetration rate of each ICT variable by using the code chunk below.
+
+```{r}
+ict_derived <- ict %>%
+  mutate(`RADIO_PR` = `Radio`/`Total households`*1000) %>%
+  mutate(`TV_PR` = `Television`/`Total households`*1000) %>%
+  mutate(`LLPHONE_PR` = `Land line phone`/`Total households`*1000) %>%
+  mutate(`MPHONE_PR` = `Mobile phone`/`Total households`*1000) %>%
+  mutate(`COMPUTER_PR` = `Computer`/`Total households`*1000) %>%
+  mutate(`INTERNET_PR` = `Internet at home`/`Total households`*1000) %>%
+  rename(`DT_PCODE` =`District Pcode`,`DT`=`District Name`,
+         `TS_PCODE`=`Township Pcode`, `TS`=`Township Name`,
+         `TT_HOUSEHOLDS`=`Total households`,
+         `RADIO`=`Radio`, `TV`=`Television`, 
+         `LLPHONE`=`Land line phone`, `MPHONE`=`Mobile phone`,
+         `COMPUTER`=`Computer`, `INTERNET`=`Internet at home`) 
+```
+
+```{r}
+summary(ict_derived)
+```
+
+Notice that six new fields have been added into the data.frame. They are RADIO_PR, TV_PR, LLPHONE_PR, MPHONE_PR, COMPUTER_PR, and INTERNET_PR.
+
+## Exploratory Data Analysis (EDA)
+
+### EDA using statistical graphics
+
+We can plot the distribution of the variables (i.e. Number of households with radio) by using appropriate Exploratory Data Analysis (EDA) as shown in the code chunk below.
+
+Histogram is useful to identify the overall distribution of the data values (i.e. left skew, right skew or normal distribution)
+
+```{r}
+ggplot(data=ict_derived, 
+       aes(x=`RADIO`)) +
+  geom_histogram(bins=20, 
+                 color="black", 
+                 fill="light blue")
+```
+
+Boxplot is useful to detect if there are outliers.
+
+```{r}
+ggplot(data=ict_derived, 
+       aes(x=`RADIO`)) +
+  geom_boxplot(color="black", 
+               fill="light blue")
+```
+
+Next, we will also plotting the distribution of the newly derived variables (i.e. Radio penetration rate) by using the code chunk below.
+
+```{r}
+ggplot(data=ict_derived, 
+       aes(x=`RADIO_PR`)) +
+  geom_histogram(bins=20, 
+                 color="black", 
+                 fill="light blue")
+```
