@@ -66,3 +66,13 @@ The code chunk below is used to perform the following tasks:
 ```{r}
 pacman::p_load(sf, spdep, tmap, tidyverse)
 ```
+
+## Getting the Data into R Environment
+
+In this section, you will learn how to bring a geospatial data and its associated attribute table into R environment. The geospatial data is in ESRI shapefile format and the attribute table is in csv fomat.
+
+### Import shapefile into r environment
+
+The code chunk below uses [*st_read()*](https://r-spatial.github.io/sf/reference/st_read.html) of **sf** package to import Hunan shapefile into R. The imported shapefile will be **simple features** Object of **sf**.
+
+
