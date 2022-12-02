@@ -239,6 +239,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#computing-proximity-matrix" id="toc-computing-proximity-matrix" class="nav-link" data-scroll-target="#computing-proximity-matrix">Computing proximity matrix</a></li>
   <li><a href="#computing-hierarchical-clustering" id="toc-computing-hierarchical-clustering" class="nav-link" data-scroll-target="#computing-hierarchical-clustering">Computing hierarchical clustering</a></li>
   <li><a href="#selecting-the-optimal-clustering-algorithm" id="toc-selecting-the-optimal-clustering-algorithm" class="nav-link" data-scroll-target="#selecting-the-optimal-clustering-algorithm">Selecting the optimal clustering algorithm</a></li>
+  <li><a href="#determining-optimal-clusters" id="toc-determining-optimal-clusters" class="nav-link" data-scroll-target="#determining-optimal-clusters">Determining Optimal Clusters</a></li>
+  <li><a href="#interpreting-the-dendrograms" id="toc-interpreting-the-dendrograms" class="nav-link" data-scroll-target="#interpreting-the-dendrograms">Interpreting the dendrograms</a></li>
+  <li><a href="#section" id="toc-section" class="nav-link" data-scroll-target="#section"></a></li>
   </ul></li>
   </ul>
 </nav>
@@ -1372,6 +1375,92 @@ Namhsan    242.15271 210.48485 450.97869 270.79121 430.02019  63.67613</code></p
 <h3 class="anchored" data-anchor-id="selecting-the-optimal-clustering-algorithm">Selecting the optimal clustering algorithm</h3>
 <p>One of the challenge in performing hierarchical clustering is to identify stronger clustering structures. The issue can be solved by using use <a href="https://www.rdocumentation.org/packages/cluster/versions/2.1.0/topics/agnes"><em>agnes()</em></a> function of <a href="https://cran.r-project.org/web/packages/cluster/"><strong>cluster</strong></a> package. It functions like <em>hclus()</em>, however, with the <em>agnes()</em> function you can also get the agglomerative coefficient, which measures the amount of clustering structure found (values closer to 1 suggest strong clustering structure).</p>
 <p>The code chunk below will be used to compute the agglomerative coefficients of all hierarchical clustering algorithms.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>m <span class="ot">&lt;-</span> <span class="fu">c</span>( <span class="st">"average"</span>, <span class="st">"single"</span>, <span class="st">"complete"</span>, <span class="st">"ward"</span>)</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(m) <span class="ot">&lt;-</span> <span class="fu">c</span>( <span class="st">"average"</span>, <span class="st">"single"</span>, <span class="st">"complete"</span>, <span class="st">"ward"</span>)</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>ac <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">agnes</span>(shan_ict, <span class="at">method =</span> x)<span class="sc">$</span>ac</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a><span class="fu">map_dbl</span>(m, ac)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  average    single  complete      ward 
+0.8131144 0.6628705 0.8950702 0.9427730 </code></pre>
+</div>
+</div>
+<p>With reference to the output above, we can see that Ward's method provides the strongest clustering structure among the four methods assessed. Hence, in the subsequent analysis, only Ward's method will be used.</p>
+</section>
+<section id="determining-optimal-clusters" class="level3">
+<h3 class="anchored" data-anchor-id="determining-optimal-clusters">Determining Optimal Clusters</h3>
+<p>Another technical challenge face by data analyst in performing clustering analysis is to determine the optimal clusters to retain.</p>
+<p>There are <a href="https://www.datanovia.com/en/lessons/determining-the-optimal-number-of-clusters-3-must-know-methods/">three</a> commonly used methods to determine the optimal clusters, they are:</p>
+<ul>
+<li><p><a href="https://en.wikipedia.org/wiki/Elbow_method_(clustering)">Elbow Method</a></p></li>
+<li><p><a href="https://www.sciencedirect.com/science/article/pii/0377042787901257?via%3Dihub">Average Silhouette Method</a></p></li>
+<li><p><a href="https://statweb.stanford.edu/~gwalther/gap">Gap Statistic Method</a></p></li>
+</ul>
+<section id="gap-statistic-method" class="level4">
+<h4 class="anchored" data-anchor-id="gap-statistic-method">Gap Statistic Method</h4>
+<p>The <a href="http://www.web.stanford.edu/~hastie/Papers/gap.pdf"><strong>gap statistic</strong></a> compares the total within intra-cluster variation for different values of k with their expected values under null reference distribution of the data. The estimate of the optimal clusters will be value that maximize the gap statistic (i.e., that yields the largest gap statistic). This means that the clustering structure is far away from the random uniform distribution of points.</p>
+<p>To compute the gap statistic, <a href="https://www.rdocumentation.org/packages/cluster/versions/2.1.0/topics/clusGap"><em>clusGap()</em></a> of <a href="https://cran.r-project.org/web/packages/cluster/"><strong>cluster</strong></a> package will be used.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">12345</span>)</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>gap_stat <span class="ot">&lt;-</span> <span class="fu">clusGap</span>(shan_ict, </span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>                    <span class="at">FUN =</span> hcut, </span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>                    <span class="at">nstart =</span> <span class="dv">25</span>, </span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>                    <span class="at">K.max =</span> <span class="dv">10</span>, </span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">B =</span> <span class="dv">50</span>)</span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the result</span></span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(gap_stat, <span class="at">method =</span> <span class="st">"firstmax"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Clustering Gap statistic ["clusGap"] from call:
+clusGap(x = shan_ict, FUNcluster = hcut, K.max = 10, B = 50,     nstart = 25)
+B=50 simulated reference sets, k = 1..10; spaceH0="scaledPCA"
+ --&gt; Number of clusters (method 'firstmax'): 1
+          logW   E.logW       gap     SE.sim
+ [1,] 8.407129 8.680794 0.2736651 0.04460994
+ [2,] 8.130029 8.350712 0.2206824 0.03880130
+ [3,] 7.992265 8.202550 0.2102844 0.03362652
+ [4,] 7.862224 8.080655 0.2184311 0.03784781
+ [5,] 7.756461 7.978022 0.2215615 0.03897071
+ [6,] 7.665594 7.887777 0.2221833 0.03973087
+ [7,] 7.590919 7.806333 0.2154145 0.04054939
+ [8,] 7.526680 7.731619 0.2049390 0.04198644
+ [9,] 7.458024 7.660795 0.2027705 0.04421874
+[10,] 7.377412 7.593858 0.2164465 0.04540947</code></pre>
+</div>
+</div>
+<p>Also note that the <a href="https://rpkgs.datanovia.com/factoextra/reference/hcut.html"><em>hcut</em></a> function used is from <a href="https://rpkgs.datanovia.com/factoextra/"><strong>factoextra</strong></a> package.</p>
+<p>Next, we can visualise the plot by using <a href="https://rpkgs.datanovia.com/factoextra/reference/fviz_nbclust.html"><em>fviz_gap_stat()</em></a> of <a href="https://rpkgs.datanovia.com/factoextra/"><strong>factoextra</strong></a> package.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_gap_stat</span>(gap_stat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Hands-on_Ex3_files/figure-html/unnamed-chunk-29-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>With reference to the gap statistic graph above, the recommended number of cluster to retain is 1. However, it is not logical to retain only one cluster. By examine the gap statistic graph, the 6-cluster gives the largest gap statistic and should be the next best cluster to pick.</p>
+<p><strong>Note:</strong> In addition to these commonly used approaches, the <a href="https://cran.r-project.org/web/packages/NbClust/">NbClust</a> package, published by Charrad et al., 2014, provides 30 indices for determining the relevant number of clusters and proposes to users the best clustering scheme from the different results obtained by varying all combinations of number of clusters, distance measures, and clustering methods.</p>
+</section>
+</section>
+<section id="interpreting-the-dendrograms" class="level3">
+<h3 class="anchored" data-anchor-id="interpreting-the-dendrograms">Interpreting the dendrograms</h3>
+<p>In the dendrogram displayed above, each leaf corresponds to one observation. As we move up the tree, observations that are similar to each other are combined into branches, which are themselves fused at a higher height.</p>
+<p>The height of the fusion, provided on the vertical axis, indicates the (dis)similarity between two observations. The higher the height of the fusion, the less similar the observations are. Note that, conclusions about the proximity of two observations can be drawn only based on the height where branches containing those two observations first are fused. We cannot use the proximity of two observations along the horizontal axis as a criteria of their similarity.</p>
+<p>It's also possible to draw the dendrogram with a border around the selected clusters by using <a href="https://stat.ethz.ch/R-manual/R-devel/library/stats/html/rect.hclust.html"><em>rect.hclust()</em></a> of R stats. The argument <em>border</em> is used to specify the border colors for the rectangles.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(hclust_ward, <span class="at">cex =</span> <span class="fl">0.6</span>)</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rect.hclust</span>(hclust_ward, </span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">k =</span> <span class="dv">6</span>, </span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">border =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Hands-on_Ex3_files/figure-html/unnamed-chunk-30-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="section" class="level3">
+<h3 class="anchored" data-anchor-id="section"></h3>
+<p>Visually-driven hierarchical clustering analysis</p>
 
 
 </section>
