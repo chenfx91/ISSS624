@@ -26,6 +26,7 @@ In this study, two data sets will be used:
 First, we are going to import the water point data into R environment.
 
 ```{r}
+#| eval: false
 wp_nga <- read_csv("aspatial/WPdx.csv") %>%
   filter(`#clean_country_name` == "Nigeria")
 ```
