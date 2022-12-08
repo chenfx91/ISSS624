@@ -26,7 +26,6 @@ In this study, two data sets will be used:
 First, we are going to import the water point data into R environment.
 
 ```{r}
-#| eval: false
 wp_nga <- read_csv("aspatial/WPdx.csv") %>%
   filter(`#clean_country_name` == "Nigeria")
 ```
@@ -195,11 +194,54 @@ nga_derived <- nga_derived %>%
 ### EDA using statistical graphics
 
 ```{r}
-ggplot(nga_derived, 
-       aes(x=`functional wpt`)) +
-  geom_histogram(bins=20, 
-                 color="black", 
-                 fill="light blue")
+Functionalwp <- ggplot(nga_derived, 
+                  aes(x=`functional wpt`)) +
+       geom_histogram(bins=20, 
+                      color="black", 
+                      fill="light blue")
 
+NonFunctionalwp <- ggplot(nga_derived, 
+                  aes(x=`nonfunctional wpt`)) +
+       geom_histogram(bins=20, 
+                      color="black", 
+                      fill="light blue")
 
+PctFunctionalwp <- ggplot(nga_derived, 
+                  aes(x=`pct_functional`)) +
+       geom_histogram(bins=20, 
+                      color="black", 
+                      fill="light blue")
+
+PctNonFunctionalwp <- ggplot(nga_derived, 
+                  aes(x=`pct_nonfunctional`)) +
+       geom_histogram(bins=20, 
+                      color="black", 
+                      fill="light blue")
+
+PctHandpump <- ggplot(nga_derived, 
+                  aes(x=`pct_handpump`)) +
+       geom_histogram(bins=20, 
+                      color="black", 
+                      fill="light blue")
+
+Pctusageless1000 <- ggplot(nga_derived, 
+                  aes(x=`pct_usageless1000`)) +
+       geom_histogram(bins=20, 
+                      color="black", 
+                      fill="light blue")
+
+PctRural <- ggplot(nga_derived, 
+                  aes(x=`pct_rural`)) +
+       geom_histogram(bins=20, 
+                      color="black", 
+                      fill="light blue")
 ```
+
+```{r}
+ggarrange(Functionalwp, NonFunctionalwp, PctFunctionalwp, PctNonFunctionalwp,
+          PctHandpump, Pctusageless1000, PctRural,
+          ncol = 3, 
+          nrow = 2)
+```
+
+### EDA using choropleth map
