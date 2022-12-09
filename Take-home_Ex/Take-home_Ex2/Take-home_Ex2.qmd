@@ -245,3 +245,69 @@ ggarrange(Functionalwp, NonFunctionalwp, PctFunctionalwp, PctNonFunctionalwp,
 ```
 
 ### EDA using choropleth map
+
+#### Preparing a choropleth map
+
+```{r}
+qtm(nga_derived,'functional wpt')
+```
+
+```{r}
+TT_wp.map <- tm_shape(nga_derived)+
+  tm_fill(col = "total wpt",
+          n = 5,
+          style = "jenks", 
+          title = "Total Water Points") + 
+  tm_borders(alpha = 0.5) 
+
+Functionalwp.map <- tm_shape(nga_derived)+
+    tm_fill(col = "functional wpt",
+          n = 5,
+          style = "jenks", 
+          title = "Functional Water Points") + 
+  tm_borders(alpha = 0.5) 
+
+tmap_arrange(TT_wp.map, Functionalwp.map,
+             asp=NA, ncol=2)
+```
+
+```{r}
+tm_shape(nga_derived) +
+    tm_polygons(c("total wpt", "functional wpt"),
+                style="jenks") +
+    tm_facets(sync = TRUE, ncol = 2) +
+  tm_legend(legend.position = c("right", "bottom"))+
+  tm_layout(outer.margins=0, asp=0)
+```
+
+## Correlation Analysis
+
+In the code chunk below, `replace_na()` is used to recode all the *NA* values in ***status_cle*** field into *Unknown*.
+
+```{r}
+nga_derived <- nga_derived %>%
+  mutate(pct_functional = replace_na(pct_functional,0)) %>%
+  mutate(pct_nonfunctional = replace_na(pct_nonfunctional,0)) %>%
+  mutate(pct_handpump = replace_na(pct_handpump,0)) %>%
+  mutate(pct_usageless1000 = replace_na(pct_usageless1000,0)) %>%
+  mutate(pct_rural = replace_na(pct_rural,0))
+```
+
+Set Geometry to Null
+
+```{r}
+cluster_vars <- nga_derived %>%
+  st_set_geometry(NULL) %>%
+  select(`functional wpt`,`nonfunctional wpt`,pct_functional,pct_nonfunctional,
+         pct_handpump,pct_usageless1000,pct_rural)
+```
+
+```{r}
+cluster_vars.cor = cor(cluster_vars)
+corrplot.mixed(cluster_vars.cor,
+         lower = "ellipse", 
+               upper = "number",
+               tl.pos = "lt",
+               diag = "l",
+               tl.col = "black")
+```
