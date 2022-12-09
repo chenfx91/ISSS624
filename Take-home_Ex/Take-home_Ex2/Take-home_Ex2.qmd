@@ -282,7 +282,7 @@ tm_shape(nga_derived) +
 
 ## Correlation Analysis
 
-In the code chunk below, `replace_na()` is used to recode all the *NA* values in ***status_cle*** field into *Unknown*.
+In the code chunk below, `replace_na()` is used to recode all the *NA* values in pct fields into 0.
 
 ```{r}
 nga_derived <- nga_derived %>%
@@ -311,3 +311,5 @@ corrplot.mixed(cluster_vars.cor,
                diag = "l",
                tl.col = "black")
 ```
+
+Need to remove pct_usageless1000 as its correlation with pct_handpump is very strongly correlated.

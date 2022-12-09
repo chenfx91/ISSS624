@@ -687,7 +687,7 @@ attr(,"class")
 </section>
 <section id="correlation-analysis" class="level2">
 <h2 class="anchored" data-anchor-id="correlation-analysis">Correlation Analysis</h2>
-<p>In the code chunk below, <code>replace_na()</code> is used to recode all the <em>NA</em> values in <strong><em>status_cle</em></strong> field into <em>Unknown</em>.</p>
+<p>In the code chunk below, <code>replace_na()</code> is used to recode all the <em>NA</em> values in pct fields into 0.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>nga_derived <span class="ot">&lt;-</span> nga_derived <span class="sc">%&gt;%</span></span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">pct_functional =</span> <span class="fu">replace_na</span>(pct_functional,<span class="dv">0</span>)) <span class="sc">%&gt;%</span></span>
@@ -715,6 +715,7 @@ attr(,"class")
 <p><img src="Take-home_Ex2_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
+<p>Need to remove pct_usageless1000 as its correlation with pct_handpump is very strongly correlated.</p>
 
 
 </section>

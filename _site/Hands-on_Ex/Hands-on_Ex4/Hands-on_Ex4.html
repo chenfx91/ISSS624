@@ -20,6 +20,69 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1.6em;
   vertical-align: middle;
 }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
 
@@ -161,6 +224,22 @@ ul.task-list li input[type="checkbox"] {
   <ul>
   <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview">Overview</a></li>
   <li><a href="#the-data" id="toc-the-data" class="nav-link" data-scroll-target="#the-data">The Data</a></li>
+  <li><a href="#getting-started" id="toc-getting-started" class="nav-link" data-scroll-target="#getting-started">Getting Started</a></li>
+  <li><a href="#a-note-about-gwmodel" id="toc-a-note-about-gwmodel" class="nav-link" data-scroll-target="#a-note-about-gwmodel">A Note about GWmodel</a></li>
+  <li><a href="#geospatial-data-wrangling" id="toc-geospatial-data-wrangling" class="nav-link" data-scroll-target="#geospatial-data-wrangling">Geospatial Data Wrangling</a>
+  <ul class="collapse">
+  <li><a href="#importing-geospatial-data" id="toc-importing-geospatial-data" class="nav-link" data-scroll-target="#importing-geospatial-data">Importing geospatial data</a></li>
+  <li><a href="#updating-crs-information" id="toc-updating-crs-information" class="nav-link" data-scroll-target="#updating-crs-information">Updating CRS information</a></li>
+  </ul></li>
+  <li><a href="#aspatial-data-wrangling" id="toc-aspatial-data-wrangling" class="nav-link" data-scroll-target="#aspatial-data-wrangling">Aspatial Data Wrangling</a>
+  <ul class="collapse">
+  <li><a href="#importing-the-aspatial-data" id="toc-importing-the-aspatial-data" class="nav-link" data-scroll-target="#importing-the-aspatial-data">Importing the aspatial data</a></li>
+  <li><a href="#converting-aspatial-data-frame-into-a-sf-object" id="toc-converting-aspatial-data-frame-into-a-sf-object" class="nav-link" data-scroll-target="#converting-aspatial-data-frame-into-a-sf-object">Converting aspatial data frame into a sf object</a></li>
+  </ul></li>
+  <li><a href="#exploratory-data-analysis-eda" id="toc-exploratory-data-analysis-eda" class="nav-link" data-scroll-target="#exploratory-data-analysis-eda">Exploratory Data Analysis (EDA)</a>
+  <ul class="collapse">
+  <li><a href="#eda-using-statistical-graphics" id="toc-eda-using-statistical-graphics" class="nav-link" data-scroll-target="#eda-using-statistical-graphics">EDA using statistical graphics</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -189,8 +268,303 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="the-data" class="level2">
 <h2 class="anchored" data-anchor-id="the-data">The Data</h2>
+<p>Two data sets will be used in this model building exercise, they are:</p>
+<ul>
+<li><p>URA Master Plan subzone boundary in shapefile format (i.e.&nbsp;<em>MP14_SUBZONE_WEB_PL</em>)</p></li>
+<li><p>condo_resale_2015 in csv format (i.e.&nbsp;<em>condo_resale_2015.csv</em>)</p></li>
+</ul>
+</section>
+<section id="getting-started" class="level2">
+<h2 class="anchored" data-anchor-id="getting-started">Getting Started</h2>
+<p>Before we get started, it is important for us to install the necessary R packages into R and launch these R packages into R environment.</p>
+<p>The R packages needed for this exercise are as follows:</p>
+<ul>
+<li><p>R package for building OLS and performing diagnostics tests</p>
+<ul>
+<li><a href="https://olsrr.rsquaredacademy.com/"><strong>olsrr</strong></a></li>
+</ul></li>
+<li><p>R package for calibrating geographical weighted family of models</p>
+<ul>
+<li><a href="https://cran.r-project.org/web/packages/GWmodel/"><strong>GWmodel</strong></a></li>
+</ul></li>
+<li><p>R package for multivariate data visualisation and analysis</p>
+<ul>
+<li><a href="https://cran.r-project.org/web/packages/corrplot/vignettes/corrplot-intro.html"><strong>corrplot</strong></a></li>
+</ul></li>
+<li><p>Spatial data handling</p>
+<ul>
+<li><strong>sf</strong></li>
+</ul></li>
+<li><p>Attribute data handling</p>
+<ul>
+<li><strong>tidyverse</strong>, especially <strong>readr</strong>, <strong>ggplot2</strong> and <strong>dplyr</strong></li>
+</ul></li>
+<li><p>Choropleth mapping</p>
+<ul>
+<li><strong>tmap</strong></li>
+</ul></li>
+</ul>
+<p>The code chunks below installs and launches these R packages into R environment.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(olsrr, corrplot, ggpubr, sf, spdep, GWmodel, tmap, tidyverse, gtsummary)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="a-note-about-gwmodel" class="level2">
+<h2 class="anchored" data-anchor-id="a-note-about-gwmodel">A Note about GWmodel</h2>
+<p><a href="https://www.jstatsoft.org/article/view/v063i17">GWmodel</a> package provides a collection of localised spatial statistical methods, namely: GW summary statistics, GW principal components analysis, GW discriminant analysis and various forms of GW regression; some of which are provided in basic and robust (outlier resistant) forms. Commonly, outputs or parameters of the GWmodel are mapped to provide a useful exploratory tool, which can often precede (and direct) a more traditional or sophisticated statistical analysis.</p>
+</section>
+<section id="geospatial-data-wrangling" class="level2">
+<h2 class="anchored" data-anchor-id="geospatial-data-wrangling">Geospatial Data Wrangling</h2>
+<section id="importing-geospatial-data" class="level3">
+<h3 class="anchored" data-anchor-id="importing-geospatial-data">Importing geospatial data</h3>
+<p>The geospatial data used in this hands-on exercise is called MP14_SUBZONE_WEB_PL. It is in ESRI shapefile format. The shapefile consists of URA Master Plan 2014's planning subzone boundaries. Polygon features are used to represent these geographic boundaries. The GIS data is in svy21 projected coordinates systems.</p>
+<p>The code chunk below is used to import <em>MP_SUBZONE_WEB_PL</em> shapefile by using <code>st_read()</code> of <strong>sf</strong> packages.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>mpsz <span class="ot">=</span> <span class="fu">st_read</span>(<span class="at">dsn =</span> <span class="st">"data/geospatial"</span>, <span class="at">layer =</span> <span class="st">"MP14_SUBZONE_WEB_PL"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Reading layer `MP14_SUBZONE_WEB_PL' from data source 
+  `C:\chenfx91\ISSS624\Hands-on_Ex\Hands-on_Ex4\data\geospatial' 
+  using driver `ESRI Shapefile'
+Simple feature collection with 323 features and 15 fields
+Geometry type: MULTIPOLYGON
+Dimension:     XY
+Bounding box:  xmin: 2667.538 ymin: 15748.72 xmax: 56396.44 ymax: 50256.33
+Projected CRS: SVY21</code></pre>
+</div>
+</div>
+<p>The report above shows that the R object used to contain the imported MP14_SUBZONE_WEB_PL shapefile is called <em>mpsz</em> and it is a simple feature object. The geometry type is <em>multipolygon</em>. it is also important to note that mpsz simple feature object does not have EPSG information.</p>
+</section>
+<section id="updating-crs-information" class="level3">
+<h3 class="anchored" data-anchor-id="updating-crs-information">Updating CRS information</h3>
+<p>The code chunk below updates the newly imported <em>mpsz</em> with the correct ESPG code (i.e.&nbsp;3414)</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>mpsz_svy21 <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(mpsz, <span class="dv">3414</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>After transforming the projection metadata, you can varify the projection of the newly transformed <em>mpsz_svy21</em> by using <code>st_crs()</code> of <strong>sf</strong> package.</p>
+<p>The code chunk below will be used to varify the newly transformed <em>mpsz_svy21</em>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">st_crs</span>(mpsz_svy21)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Coordinate Reference System:
+  User input: EPSG:3414 
+  wkt:
+PROJCRS["SVY21 / Singapore TM",
+    BASEGEOGCRS["SVY21",
+        DATUM["SVY21",
+            ELLIPSOID["WGS 84",6378137,298.257223563,
+                LENGTHUNIT["metre",1]]],
+        PRIMEM["Greenwich",0,
+            ANGLEUNIT["degree",0.0174532925199433]],
+        ID["EPSG",4757]],
+    CONVERSION["Singapore Transverse Mercator",
+        METHOD["Transverse Mercator",
+            ID["EPSG",9807]],
+        PARAMETER["Latitude of natural origin",1.36666666666667,
+            ANGLEUNIT["degree",0.0174532925199433],
+            ID["EPSG",8801]],
+        PARAMETER["Longitude of natural origin",103.833333333333,
+            ANGLEUNIT["degree",0.0174532925199433],
+            ID["EPSG",8802]],
+        PARAMETER["Scale factor at natural origin",1,
+            SCALEUNIT["unity",1],
+            ID["EPSG",8805]],
+        PARAMETER["False easting",28001.642,
+            LENGTHUNIT["metre",1],
+            ID["EPSG",8806]],
+        PARAMETER["False northing",38744.572,
+            LENGTHUNIT["metre",1],
+            ID["EPSG",8807]]],
+    CS[Cartesian,2],
+        AXIS["northing (N)",north,
+            ORDER[1],
+            LENGTHUNIT["metre",1]],
+        AXIS["easting (E)",east,
+            ORDER[2],
+            LENGTHUNIT["metre",1]],
+    USAGE[
+        SCOPE["Cadastre, engineering survey, topographic mapping."],
+        AREA["Singapore - onshore and offshore."],
+        BBOX[1.13,103.59,1.47,104.07]],
+    ID["EPSG",3414]]</code></pre>
+</div>
+</div>
+<p>Notice that the EPSG: is indicated as <em>3414</em> now.</p>
+<p>Next, you will reveal the extent of <em>mpsz_svy21</em> by using <code>st_bbox()</code> of sf package.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">st_bbox</span>(mpsz_svy21) <span class="co">#view extent</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     xmin      ymin      xmax      ymax 
+ 2667.538 15748.721 56396.440 50256.334 </code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="aspatial-data-wrangling" class="level2">
+<h2 class="anchored" data-anchor-id="aspatial-data-wrangling">Aspatial Data Wrangling</h2>
+<section id="importing-the-aspatial-data" class="level3">
+<h3 class="anchored" data-anchor-id="importing-the-aspatial-data">Importing the aspatial data</h3>
+<p>The <em>condo_resale_2015</em> is in csv file format. The codes chunk below uses <code>read_csv()</code> function of <strong>readr</strong> package to import <em>condo_resale_2015</em> into R as a tibble data frame called <em>condo_resale</em>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>condo_resale <span class="ot">=</span> <span class="fu">read_csv</span>(<span class="st">"data/aspatial/Condo_resale_2015.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 1436 Columns: 23
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+dbl (23): LATITUDE, LONGITUDE, POSTCODE, SELLING_PRICE, AREA_SQM, AGE, PROX_...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+</div>
+<p>After importing the data file into R, it is important for us to examine if the data file has been imported correctly.</p>
+<p>The codes chunks below uses <code>glimpse()</code> to display the data structure of will do the job.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(condo_resale)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 1,436
+Columns: 23
+$ LATITUDE             &lt;dbl&gt; 1.287145, 1.328698, 1.313727, 1.308563, 1.321437,…
+$ LONGITUDE            &lt;dbl&gt; 103.7802, 103.8123, 103.7971, 103.8247, 103.9505,…
+$ POSTCODE             &lt;dbl&gt; 118635, 288420, 267833, 258380, 467169, 466472, 3…
+$ SELLING_PRICE        &lt;dbl&gt; 3000000, 3880000, 3325000, 4250000, 1400000, 1320…
+$ AREA_SQM             &lt;dbl&gt; 309, 290, 248, 127, 145, 139, 218, 141, 165, 168,…
+$ AGE                  &lt;dbl&gt; 30, 32, 33, 7, 28, 22, 24, 24, 27, 31, 17, 22, 6,…
+$ PROX_CBD             &lt;dbl&gt; 7.941259, 6.609797, 6.898000, 4.038861, 11.783402…
+$ PROX_CHILDCARE       &lt;dbl&gt; 0.16597932, 0.28027246, 0.42922669, 0.39473543, 0…
+$ PROX_ELDERLYCARE     &lt;dbl&gt; 2.5198118, 1.9333338, 0.5021395, 1.9910316, 1.121…
+$ PROX_URA_GROWTH_AREA &lt;dbl&gt; 6.618741, 7.505109, 6.463887, 4.906512, 6.410632,…
+$ PROX_HAWKER_MARKET   &lt;dbl&gt; 1.76542207, 0.54507614, 0.37789301, 1.68259969, 0…
+$ PROX_KINDERGARTEN    &lt;dbl&gt; 0.05835552, 0.61592412, 0.14120309, 0.38200076, 0…
+$ PROX_MRT             &lt;dbl&gt; 0.5607188, 0.6584461, 0.3053433, 0.6910183, 0.528…
+$ PROX_PARK            &lt;dbl&gt; 1.1710446, 0.1992269, 0.2779886, 0.9832843, 0.116…
+$ PROX_PRIMARY_SCH     &lt;dbl&gt; 1.6340256, 0.9747834, 1.4715016, 1.4546324, 0.709…
+$ PROX_TOP_PRIMARY_SCH &lt;dbl&gt; 3.3273195, 0.9747834, 1.4715016, 2.3006394, 0.709…
+$ PROX_SHOPPING_MALL   &lt;dbl&gt; 2.2102717, 2.9374279, 1.2256850, 0.3525671, 1.307…
+$ PROX_SUPERMARKET     &lt;dbl&gt; 0.9103958, 0.5900617, 0.4135583, 0.4162219, 0.581…
+$ PROX_BUS_STOP        &lt;dbl&gt; 0.10336166, 0.28673408, 0.28504777, 0.29872340, 0…
+$ NO_Of_UNITS          &lt;dbl&gt; 18, 20, 27, 30, 30, 31, 32, 32, 32, 32, 34, 34, 3…
+$ FAMILY_FRIENDLY      &lt;dbl&gt; 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0…
+$ FREEHOLD             &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1…
+$ LEASEHOLD_99YR       &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(condo_resale<span class="sc">$</span>LONGITUDE) <span class="co">#see the data in XCOORD column</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 103.7802 103.8123 103.7971 103.8247 103.9505 103.9386</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(condo_resale<span class="sc">$</span>LATITUDE) <span class="co">#see the data in YCOORD column</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1.287145 1.328698 1.313727 1.308563 1.321437 1.314198</code></pre>
+</div>
+</div>
+<p>Next, <code>summary()</code> of base R is used to display the summary statistics of <em>cond_resale</em> tibble data frame.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(condo_resale)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    LATITUDE       LONGITUDE        POSTCODE      SELLING_PRICE     
+ Min.   :1.240   Min.   :103.7   Min.   : 18965   Min.   :  540000  
+ 1st Qu.:1.309   1st Qu.:103.8   1st Qu.:259849   1st Qu.: 1100000  
+ Median :1.328   Median :103.8   Median :469298   Median : 1383222  
+ Mean   :1.334   Mean   :103.8   Mean   :440439   Mean   : 1751211  
+ 3rd Qu.:1.357   3rd Qu.:103.9   3rd Qu.:589486   3rd Qu.: 1950000  
+ Max.   :1.454   Max.   :104.0   Max.   :828833   Max.   :18000000  
+    AREA_SQM          AGE           PROX_CBD       PROX_CHILDCARE    
+ Min.   : 34.0   Min.   : 0.00   Min.   : 0.3869   Min.   :0.004927  
+ 1st Qu.:103.0   1st Qu.: 5.00   1st Qu.: 5.5574   1st Qu.:0.174481  
+ Median :121.0   Median :11.00   Median : 9.3567   Median :0.258135  
+ Mean   :136.5   Mean   :12.14   Mean   : 9.3254   Mean   :0.326313  
+ 3rd Qu.:156.0   3rd Qu.:18.00   3rd Qu.:12.6661   3rd Qu.:0.368293  
+ Max.   :619.0   Max.   :37.00   Max.   :19.1804   Max.   :3.465726  
+ PROX_ELDERLYCARE  PROX_URA_GROWTH_AREA PROX_HAWKER_MARKET PROX_KINDERGARTEN 
+ Min.   :0.05451   Min.   :0.2145       Min.   :0.05182    Min.   :0.004927  
+ 1st Qu.:0.61254   1st Qu.:3.1643       1st Qu.:0.55245    1st Qu.:0.276345  
+ Median :0.94179   Median :4.6186       Median :0.90842    Median :0.413385  
+ Mean   :1.05351   Mean   :4.5981       Mean   :1.27987    Mean   :0.458903  
+ 3rd Qu.:1.35122   3rd Qu.:5.7550       3rd Qu.:1.68578    3rd Qu.:0.578474  
+ Max.   :3.94916   Max.   :9.1554       Max.   :5.37435    Max.   :2.229045  
+    PROX_MRT         PROX_PARK       PROX_PRIMARY_SCH  PROX_TOP_PRIMARY_SCH
+ Min.   :0.05278   Min.   :0.02906   Min.   :0.07711   Min.   :0.07711     
+ 1st Qu.:0.34646   1st Qu.:0.26211   1st Qu.:0.44024   1st Qu.:1.34451     
+ Median :0.57430   Median :0.39926   Median :0.63505   Median :1.88213     
+ Mean   :0.67316   Mean   :0.49802   Mean   :0.75471   Mean   :2.27347     
+ 3rd Qu.:0.84844   3rd Qu.:0.65592   3rd Qu.:0.95104   3rd Qu.:2.90954     
+ Max.   :3.48037   Max.   :2.16105   Max.   :3.92899   Max.   :6.74819     
+ PROX_SHOPPING_MALL PROX_SUPERMARKET PROX_BUS_STOP       NO_Of_UNITS    
+ Min.   :0.0000     Min.   :0.0000   Min.   :0.001595   Min.   :  18.0  
+ 1st Qu.:0.5258     1st Qu.:0.3695   1st Qu.:0.098356   1st Qu.: 188.8  
+ Median :0.9357     Median :0.5687   Median :0.151710   Median : 360.0  
+ Mean   :1.0455     Mean   :0.6141   Mean   :0.193974   Mean   : 409.2  
+ 3rd Qu.:1.3994     3rd Qu.:0.7862   3rd Qu.:0.220466   3rd Qu.: 590.0  
+ Max.   :3.4774     Max.   :2.2441   Max.   :2.476639   Max.   :1703.0  
+ FAMILY_FRIENDLY     FREEHOLD      LEASEHOLD_99YR  
+ Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
+ 1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000  
+ Median :0.0000   Median :0.0000   Median :0.0000  
+ Mean   :0.4868   Mean   :0.4227   Mean   :0.4882  
+ 3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000  
+ Max.   :1.0000   Max.   :1.0000   Max.   :1.0000  </code></pre>
+</div>
+</div>
+</section>
+<section id="converting-aspatial-data-frame-into-a-sf-object" class="level3">
+<h3 class="anchored" data-anchor-id="converting-aspatial-data-frame-into-a-sf-object">Converting aspatial data frame into a sf object</h3>
+<p>Currently, the <em>condo_resale</em> tibble data frame is aspatial. We will convert it to a <strong>sf</strong> object. The code chunk below converts condo_resale data frame into a simple feature data frame by using <code>st_as_sf()</code> of <strong>sf</strong> packages.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>condo_resale.sf <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(condo_resale,</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>                            <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"LONGITUDE"</span>, <span class="st">"LATITUDE"</span>),</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>                            <span class="at">crs=</span><span class="dv">4326</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(<span class="at">crs=</span><span class="dv">3414</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Notice that <code>st_transform()</code> of <strong>sf</strong> package is used to convert the coordinates from wgs84 (i.e.&nbsp;crs:4326) to svy21 (i.e.&nbsp;crs=3414).</p>
+<p>Next, <code>head()</code> is used to list the content of <em>condo_resale.sf</em> object.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(condo_resale.sf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Simple feature collection with 6 features and 21 fields
+Geometry type: POINT
+Dimension:     XY
+Bounding box:  xmin: 22085.12 ymin: 29951.54 xmax: 41042.56 ymax: 34546.2
+Projected CRS: SVY21 / Singapore TM
+# A tibble: 6 × 22
+  POSTCODE SELLI…¹ AREA_…²   AGE PROX_…³ PROX_…⁴ PROX_…⁵ PROX_…⁶ PROX_…⁷ PROX_…⁸
+     &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+1   118635 3000000     309    30    7.94   0.166   2.52     6.62   1.77   0.0584
+2   288420 3880000     290    32    6.61   0.280   1.93     7.51   0.545  0.616 
+3   267833 3325000     248    33    6.90   0.429   0.502    6.46   0.378  0.141 
+4   258380 4250000     127     7    4.04   0.395   1.99     4.91   1.68   0.382 
+5   467169 1400000     145    28   11.8    0.119   1.12     6.41   0.565  0.461 
+6   466472 1320000     139    22   10.3    0.125   0.789    5.09   0.781  0.0994
+# … with 12 more variables: PROX_MRT &lt;dbl&gt;, PROX_PARK &lt;dbl&gt;,
+#   PROX_PRIMARY_SCH &lt;dbl&gt;, PROX_TOP_PRIMARY_SCH &lt;dbl&gt;,
+#   PROX_SHOPPING_MALL &lt;dbl&gt;, PROX_SUPERMARKET &lt;dbl&gt;, PROX_BUS_STOP &lt;dbl&gt;,
+#   NO_Of_UNITS &lt;dbl&gt;, FAMILY_FRIENDLY &lt;dbl&gt;, FREEHOLD &lt;dbl&gt;,
+#   LEASEHOLD_99YR &lt;dbl&gt;, geometry &lt;POINT [m]&gt;, and abbreviated variable names
+#   ¹​SELLING_PRICE, ²​AREA_SQM, ³​PROX_CBD, ⁴​PROX_CHILDCARE, ⁵​PROX_ELDERLYCARE,
+#   ⁶​PROX_URA_GROWTH_AREA, ⁷​PROX_HAWKER_MARKET, ⁸​PROX_KINDERGARTEN</code></pre>
+</div>
+</div>
+<p>Notice that the output is in point feature data frame.</p>
+</section>
+</section>
+<section id="exploratory-data-analysis-eda" class="level2">
+<h2 class="anchored" data-anchor-id="exploratory-data-analysis-eda">Exploratory Data Analysis (EDA)</h2>
+<p>In the section, you will learn how to use statistical graphics functions of <strong>ggplot2</strong> package to perform EDA.</p>
+<section id="eda-using-statistical-graphics" class="level3">
+<h3 class="anchored" data-anchor-id="eda-using-statistical-graphics">EDA using statistical graphics</h3>
+<p>We can plot the distribution of <em>SELLING_PRICE</em> by using appropriate Exploratory Data Analysis (EDA) as shown in the code chunk below.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>condo_resale.sf, <span class="fu">aes</span>(<span class="at">x=</span><span class="st">`</span><span class="at">SELLING_PRICE</span><span class="st">`</span>)) <span class="sc">+</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins=</span><span class="dv">20</span>, <span class="at">color=</span><span class="st">"black"</span>, <span class="at">fill=</span><span class="st">"light blue"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Hands-on_Ex4_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
