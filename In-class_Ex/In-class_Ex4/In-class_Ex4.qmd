@@ -1,5 +1,5 @@
 ---
-title: "Hands-on_Ex4: Calirating Hedonic Pricing Model for Private Highrise Property with GWR Method"
+title: "In-class_Ex4: Calirating Hedonic Pricing Model for Private Highrise Property with GWR Method"
 editor: visual
 ---
 
