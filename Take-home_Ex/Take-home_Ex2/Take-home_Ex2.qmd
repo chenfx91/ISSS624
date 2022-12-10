@@ -189,6 +189,38 @@ nga_derived <- nga_derived %>%
   mutate(`pct_rural` = `rural wpt`/`total wpt`)
 ```
 
+### Checking of duplicated shapeName
+
+```{r}
+duplicated_shapeName <- nga_derived$shapeName[nga_derived$shapeName %in% nga_derived$shapeName[duplicated(nga_derived$shapeName)]]
+
+duplicated_shapeName
+```
+
+By using google map, we are able to retrieve the actual name and state of the areas. The table below shows the index and the actual name of the area.
+
+| Index | Actual Shape Name |
+|-------|-------------------|
+| 94    | Bassa (Kogi)      |
+| 95    | Bassa (Plateau)   |
+| 304   | Ifelodun (Kwara)  |
+| 305   | Ifelodun (Osun)   |
+| 355   | Irepodun (Kwara)  |
+| 356   | Irepodun (Osun)   |
+| 518   | Nassarawa         |
+| 546   | Obi (Benue)       |
+| 547   | Obi (Nasarawa)    |
+| 693   | Surulere (lagos)  |
+| 694   | Surelere (Oyo)    |
+
+We will access the individual index of the nga_derived data frame and change the value. Lastly, use the length() function to ensure there is no more duplicated shapeName.
+
+```{r}
+nga_derived$shapeName[c(94,95,304,305,355,356,519,546,547,693,694)] <- c("Bassa (Kogi)", "Bassa (Plateau)", "Ifelodun (Kwara)", "Ifelodun (Osun)", "Irepodun (Kwara)", "Iredpodun (Osun)", "Nassarawa", "Obi (Benue)", "Obi (Nasarawa)", "Surulere (Lagos)", "Surulere (Oyo)")
+
+length((nga_derived$shapeName[nga_derived$shapeName %in% nga_derived$shapeName[duplicated((nga_derived$shapeName))]]))
+```
+
 ## Exploratory Data Analysis
 
 ### EDA using statistical graphics
@@ -312,4 +344,33 @@ corrplot.mixed(cluster_vars.cor,
                tl.col = "black")
 ```
 
-Need to remove pct_usageless1000 as its correlation with pct_handpump is very strongly correlated.
+The correlatioin plot above shows that pct_usageless1000 and pct_handpump are very strongly correlated. This suggest that only one of them should be used in the cluster analysis instead of both.
+
+## Hierarchy Cluster Analysis
+
+In this section, we will perform hierarchical cluster analysis. The analysis consists of four major steps:
+
+### Extracting clustering variables
+
+Confirming the clustering variables using the code chunk below.
+
+```{r}
+cluster_vars <- nga_derived %>%
+  st_set_geometry(NULL) %>%
+  select('shapeName','functional wpt', 'nonfunctional wpt', 'pct_functional', 'pct_nonfunctional', 'pct_handpump', 'pct_rural')
+head(cluster_vars,10)
+```
+
+Next, we need to change the rows by district name instead of row number by using the code chunk below
+
+```{r}
+row.names(cluster_vars) <- cluster_vars$'shapeName'
+head(cluster_vars,10)
+```
+
+Then, we delete the shapeName field by using the code chunk below.
+
+```{r}
+cluster_vars <- select(cluster_vars, c(2:6))
+head(cluster_vars, 10)
+```
