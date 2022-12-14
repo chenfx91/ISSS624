@@ -1038,4 +1038,4 @@ We need to be alarmed upon seeing cluster 3 as it has very low amount and penetr
 
 ## Acknowledgements
 
-As usual, this analysis has referred heavily to the Chapter 5 of the [learning resources](https://r4gdsa.netlify.app/chap05.html) prepared by Prof Kam Tin Seong. Section on [checking of duplicated shapeName](https://isss624chenfx.netlify.app/take-home_ex/take-home_ex2/take-home_ex2#checking-of-duplicated-shapename) has referred to our coursemate, Jordan's Take-home Ex1 to sieve out and rename the duplicated shapeNames.
+As usual, this analysis has referred heavily to the Chapter 5 of the [learning resources](https://r4gdsa.netlify.app/chap05.html) prepared by Prof Kam Tin Seong. Section on [checking of duplicated shapeName](https://isss624chenfx.netlify.app/take-home_ex/take-home_ex2/take-home_ex2#checking-of-duplicated-shapename) has referred to our coursemate, Jordan's [Take-home Ex1](https://jordan-isss624-geospatial.netlify.app/posts/geo/geospatial_nigeriasegmentation/#checking-of-duplicated-area-name) to sieve out and rename the duplicated shapeNames.

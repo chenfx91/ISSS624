@@ -1,8 +1,12 @@
 ---
 title: "Take-home Exercise 1: Analysing and Visualising Spatial Patterns of Non-Functional Water Points"
 editor: visual
-date: 30 Nov 2022
+date: last-modified
 author: Fangxian
+format: 
+  html: 
+    code-fold: true
+    code-summary: "Show the code"
 ---
 
 ![*PHOTO: google.com/search*](water.jpg){fig-align="center"}
