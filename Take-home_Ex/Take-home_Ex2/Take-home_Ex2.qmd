@@ -1,5 +1,5 @@
 ---
-title: "Take-home Exercise 2:Regionalisation of Multivariate Water Point Attributes with Non-spatially Constrained and Spatially Constrained Clustering Methods"
+title: "Take-home Exercise 2: Regionalisation of Multivariate Water Point Attributes with Non-spatially Constrained and Spatially Constrained Clustering Methods"
 author: Fangxian
 editor: visual
 date: last-modified
@@ -1025,8 +1025,17 @@ From the above table, we can see a more clear distinctions across the different 
 
 ## Conclusion
 
-4 clusters are derived
+4 clusters are derived, we other than the visuals we saw above, the characteristics of the clusters can be summarized below in the table.
+
+| Cluster    | Functional Water Points | Non-functional Water Points | \% Functional Water Points | \% Non-Functional Water Points | \% Handpump | \% Rural |
+|--------|-----------|------------|-----------|-----------|------------|---------|
+| 1 (green)  | mid                     | mid                         | mid                        | mid                            | low         | low      |
+| 2 (yellow) | mid-high                | high                        | mid                        | high                           | high        | high     |
+| 3 (purple) | low                     | mid                         | low                        | high                           | low         | high     |
+| 4 (red)    | high                    | mid                         | high                       | low                            | high        | high     |
+
+We need to be alarmed upon seeing cluster 3 as it has very low amount and penetration of functional water points and high penetration of non-functional water points. Looking at the cluster map, cluster 3 spread across a very wide range of regions, this shows how serious the water supply issues are in Nigeria. Based on the cluster 3 area, we can refer to Take-home Exercise 1, [Gi values map](https://isss624chenfx.netlify.app/take-home_ex/take-home_ex1/take-home_ex1#mapping-gi-values-with-adaptive-distance-weights) to zoom in to the utmost severe areas in cluster 3 to tackle the problems first.
 
 ## Acknowledgements
 
-As usual, this analysis has referred heavily to the Chapter 5 of the [learning resources](https://r4gdsa.netlify.app/chap05.html) prepared by Prof Kam Tin Seong.
+As usual, this analysis has referred heavily to the Chapter 5 of the [learning resources](https://r4gdsa.netlify.app/chap05.html) prepared by Prof Kam Tin Seong. Section on [checking of duplicated shapeName](https://isss624chenfx.netlify.app/take-home_ex/take-home_ex2/take-home_ex2#checking-of-duplicated-shapename) has referred to our coursemate, Jordan's Take-home Ex1 to sieve out and rename the duplicated shapeNames.
